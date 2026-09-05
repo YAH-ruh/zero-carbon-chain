@@ -1,0 +1,339 @@
+========================================
+  微碳链 - 区块链碳积分可信交易平台
+  Micro Carbon Chain v1.0
+========================================
+🔗 模拟联盟链已初始化，当前区块高度: 0
+[GIN-debug] [WARNING] Creating an Engine instance with the Logger and Recovery middleware already attached.
+
+[GIN-debug] [WARNING] Running in "debug" mode. Switch to "release" mode in production.
+ - using env:	export GIN_MODE=release
+ - using code:	gin.SetMode(gin.ReleaseMode)
+
+[GIN-debug] GET    /api/health               --> blockchain-demo/routes.SetupRouter.func1 (4 handlers)
+[GIN-debug] POST   /api/auth/register        --> blockchain-demo/handlers.Register (4 handlers)
+[GIN-debug] POST   /api/auth/login           --> blockchain-demo/handlers.Login (4 handlers)
+[GIN-debug] GET    /api/auth/me              --> blockchain-demo/handlers.GetCurrentUser (5 handlers)
+[GIN-debug] POST   /api/chain/upload         --> blockchain-demo/handlers.OnChainData (5 handlers)
+[GIN-debug] GET    /api/chain/query          --> blockchain-demo/handlers.QueryByDataNo (5 handlers)
+[GIN-debug] POST   /api/chain/verify         --> blockchain-demo/handlers.VerifyData (5 handlers)
+[GIN-debug] GET    /api/chain/info           --> blockchain-demo/handlers.GetChainInfo (5 handlers)
+[GIN-debug] GET    /api/chain/blocks         --> blockchain-demo/handlers.ListBlocks (5 handlers)
+[GIN-debug] POST   /api/energy/simulate      --> blockchain-demo/handlers.SimulateEnergyData (6 handlers)
+[GIN-debug] GET    /api/energy/list          --> blockchain-demo/handlers.ListEnergyRecords (6 handlers)
+[GIN-debug] POST   /api/carbon/calculate     --> blockchain-demo/handlers.CalculateAndUpload (6 handlers)
+[GIN-debug] GET    /api/carbon/my-credits    --> blockchain-demo/handlers.ListMyCredits (6 handlers)
+[GIN-debug] GET    /api/carbon/stats         --> blockchain-demo/handlers.GetCarbonStats (6 handlers)
+[GIN-debug] POST   /api/carbon/sell          --> blockchain-demo/handlers.CreateSellOrder (6 handlers)
+[GIN-debug] GET    /api/carbon/sell-orders   --> blockchain-demo/handlers.ListSellOrders (6 handlers)
+[GIN-debug] POST   /api/enterprise/advice    --> blockchain-demo/handlers.GetEmissionReductionAdvice (6 handlers)
+[GIN-debug] GET    /api/admin/park/overview  --> blockchain-demo/handlers.GetParkOverview (6 handlers)
+[GIN-debug] GET    /api/admin/park/enterprises --> blockchain-demo/handlers.ListParkEnterprises (6 handlers)
+[GIN-debug] PUT    /api/admin/enterprise/status --> blockchain-demo/handlers.UpdateEnterpriseStatus (6 handlers)
+[GIN-debug] POST   /api/admin/park/report    --> blockchain-demo/handlers.GenerateParkReport (6 handlers)
+[GIN-debug] GET    /api/admin/enterprise/detail --> blockchain-demo/handlers.GetEnterpriseDetail (6 handlers)
+[GIN-debug] GET    /api/exchange/orders      --> blockchain-demo/handlers.ListPendingOrders (6 handlers)
+[GIN-debug] POST   /api/exchange/match       --> blockchain-demo/handlers.MatchOrder (6 handlers)
+[GIN-debug] POST   /api/exchange/verify-credit --> blockchain-demo/handlers.VerifyCreditSource (6 handlers)
+[GIN-debug] GET    /api/exchange/transactions --> blockchain-demo/handlers.ListTransactions (6 handlers)
+[GIN-debug] GET    /api/regulator/chain/all  --> blockchain-demo/handlers.GetAllChainRecords (6 handlers)
+[GIN-debug] POST   /api/regulator/verify     --> blockchain-demo/handlers.VerifyAnyData (6 handlers)
+[GIN-debug] GET    /api/regulator/platform/stats --> blockchain-demo/handlers.GetPlatformStats (6 handlers)
+[GIN-debug] GET    /api/regulator/risk-alert --> blockchain-demo/handlers.GenerateRiskAlert (6 handlers)
+[GIN-debug] GET    /api/regulator/users      --> blockchain-demo/handlers.GetAllUsers (6 handlers)
+
+🚀 服务启动成功，监听端口: :8080
+📖 API文档: http://localhost:8080/api/health
+📝 默认监管账号: admin / admin123
+========================================
+[GIN-debug] [WARNING] You trusted all proxies, this is NOT safe. We recommend you to set a value.
+Please check https://pkg.go.dev/github.com/gin-gonic/gin#readme-don-t-trust-all-proxies for details.
+[GIN-debug] Listening and serving HTTP on :8080
+2026-09-05 10:58:36.579 [INFO ] 数据表迁移完成
+2026-09-05 10:58:36.593 [INFO ] 数据库初始化完成: ./data/carbon_chain.db
+2026-09-05 10:58:36.593 [INFO ] ⛓ 模拟联盟链恢复完成，区块总数=6 最新高度=6
+2026-09-05 10:59:07.032 [INFO ] 数据表迁移完成
+2026-09-05 10:59:07.041 [INFO ] 数据库初始化完成: ./data/carbon_chain.db
+2026-09-05 10:59:07.041 [INFO ] ⛓ 模拟联盟链恢复完成，区块总数=6 最新高度=6
+2026-09-05 10:59:26.630 [WARN ] 请求 method=POST path=/api/auth/login status=400
+2026-09-05 10:59:26.710 [WARN ] 请求 method=POST path=/api/auth/login status=400
+2026-09-05 10:59:26.750 [WARN ] 请求 method=POST path=/api/auth/login status=400
+2026-09-05 10:59:26.790 [WARN ] 请求 method=POST path=/api/auth/login status=400
+2026-09-05 10:59:26.829 [WARN ] 请求 method=GET path=/api/chain/audit status=401
+2026-09-05 10:59:50.691 [WARN ] 请求 method=GET path=/api/chain/info status=401
+2026-09-05 11:00:14.461 [WARN ] 请求 method=GET path=/api/chain/blocks status=401
+2026-09-05 11:00:37.403 [WARN ] 请求 method=GET path=/api/regulator/platform/stats status=401
+2026-09-05 11:00:59.371 [WARN ] 请求 method=GET path=/api/energy/list status=401
+2026-09-05 11:01:23.394 [WARN ] 请求 method=GET path=/api/chain/audit status=401
+2026-09-05 11:01:35.920 [WARN ] 请求 method=POST path=/api/auth/login status=400
+2026-09-05 11:01:56.020 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:01:56.086 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 11:01:56.139 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 11:02:47.226 [INFO ] 数据表迁移完成
+2026-09-05 11:02:47.293 [INFO ] 预置账号创建成功: 小微企业001 role=enterprise
+2026-09-05 11:02:47.346 [INFO ] 预置账号创建成功: 园区管理员001 role=park_admin
+2026-09-05 11:02:47.398 [INFO ] 预置账号创建成功: 碳交易所001 role=exchange
+2026-09-05 11:02:47.452 [INFO ] 预置账号创建成功: 监管核查001 role=regulator
+2026-09-05 11:02:47.452 [INFO ] 数据库初始化完成: ./data/carbon_chain.db
+2026-09-05 11:02:47.458 [INFO ] ⛓ 创世区块创建并落库 height=0 hash=5026712168cda4079e0f91c92bd5ddcce63d57c6e57c9ce35434d5db937d334e
+2026-09-05 11:02:47.458 [INFO ] ⛓ 模拟联盟链恢复完成，区块总数=1 最新高度=0
+2026-09-05 11:03:10.229 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:03:10.289 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 11:03:10.339 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 11:03:10.389 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 11:03:10.470 [INFO ] [操作审计] op=register operator=(id=0,role=) biz=user/测试买方企业 hash= detail=新企业账号注册 ip=::1
+2026-09-05 11:03:10.474 [INFO ] ⛓ 上链成功 height=1 type=energy data=ENERGY-20260905-1788577390473 hash=bc11de29e23928a982a66f99e6b04bae45ef72c62d95bd7d830231dd65573d77 merkle=82488cdc8446a9d06da7bd64f042c70bdc8846b4609c08567165700fef2510f3
+2026-09-05 11:03:10.474 [INFO ] [操作审计] op=energy_create operator=小微企业001(id=1,role=enterprise) biz=energy/ENERGY-20260905-1788577390473 hash=bc11de29e23928a982a66f99e6b04bae45ef72c62d95bd7d830231dd65573d77 detail=能耗上报: 电1000.0kWh 气50.0m³ 水10.0t ip=::1
+2026-09-05 11:03:10.489 [INFO ] ⛓ 上链成功 height=2 type=credit data=CREDIT-20260905-0001 hash=de89a5ba0841d64353413dc6154a8538f3b8f25a6177f8842830125a19613081 merkle=e14de3ccd36a6acbd5d5c481203a9eb1ebd466ed0bdf5a9c3a706a4af7ee8593
+2026-09-05 11:03:10.489 [INFO ] [操作审计] op=credit_calculate operator=小微企业001(id=1,role=enterprise) biz=credit/CREDIT-20260905-0001 hash=de89a5ba0841d64353413dc6154a8538f3b8f25a6177f8842830125a19613081 detail=碳积分核算: 排放896.23kgCO2 积分896.23 ip=::1
+2026-09-05 11:03:10.507 [INFO ] [操作审计] op=sell_order_create operator=小微企业001(id=1,role=enterprise) biz=sell_order/SELL-20260905-0001 hash= detail=创建卖出挂单: 100.00积分 @5.00元 ip=::1
+2026-09-05 11:03:10.518 [INFO ] ⛓ 上链成功 height=3 type=transaction data=TX-20260905-0001 hash=f55520b716cfac77915621c7df96ab3fbcee6088fcb51ac217ea15be43a1d1f2 merkle=c9aa49055dfaa7dd49d58210c7250cf389b0e3f4d7c1619c4de199570ff03d95
+2026-09-05 11:03:10.518 [INFO ] [操作审计] op=trade_match operator=碳交易所001(id=3,role=exchange) biz=transaction/TX-20260905-0001 hash=f55520b716cfac77915621c7df96ab3fbcee6088fcb51ac217ea15be43a1d1f2 detail=交易撮合成交: 数量100.00积分 单价5.00元 总额500.00元 ip=::1
+2026-09-05 11:03:10.529 [WARN ] AI 生成企业减排建议失败，已降级模板: 未配置 DEEPSEEK_API_KEY
+2026-09-05 11:03:10.531 [INFO ] ⛓ 上链成功 height=4 type=report data=REPORT-20260905-1788577390529447 hash=7a4fac67770350c0dae475d2a2bb3d5611bdec1a8c6cd6e6c7905d24136bb0ab merkle=c5b5f0c82f7349b6c779bdad16d6288c34ade71e29db906f15335a573d5fcd8f
+2026-09-05 11:03:10.531 [INFO ] [操作审计] op=report_generate operator=小微企业001(id=1,role=enterprise) biz=report/REPORT-20260905-1788577390529447 hash=7a4fac67770350c0dae475d2a2bb3d5611bdec1a8c6cd6e6c7905d24136bb0ab detail=AI报告生成: 小微企业001节能减排建议 (source=fallback) ip=::1
+2026-09-05 11:03:10.543 [WARN ] AI 生成园区低碳报告失败，已降级模板: 未配置 DEEPSEEK_API_KEY
+2026-09-05 11:03:10.545 [INFO ] ⛓ 上链成功 height=5 type=report data=REPORT-20260905-1788577390543475 hash=53c75691d96aef70939af75648a7d5da607850129d260c6724abfabcac3f3f41 merkle=ac48b658e771dc1540964bf1e86ddf3ecca8ae9e343ee1dfd026136335cfa216
+2026-09-05 11:03:10.545 [INFO ] [操作审计] op=report_generate operator=园区管理员001(id=2,role=park_admin) biz=report/REPORT-20260905-1788577390543475 hash=53c75691d96aef70939af75648a7d5da607850129d260c6724abfabcac3f3f41 detail=AI报告生成: 示范工业园区园区低碳发展报告 (source=fallback) ip=::1
+2026-09-05 11:03:10.559 [WARN ] 请求 method=GET path=/api/chain/query status=404
+2026-09-05 11:03:10.585 [WARN ] 请求 method=GET path=/api/regulator/users status=403
+2026-09-05 11:05:22.854 [INFO ] 数据表迁移完成
+2026-09-05 11:05:22.864 [INFO ] 数据库初始化完成: ./data/carbon_chain.db
+2026-09-05 11:05:22.864 [INFO ] ⛓ 模拟联盟链恢复完成，区块总数=6 最新高度=5
+2026-09-05 11:05:41.175 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:05:41.254 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 11:05:41.308 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 11:05:41.343 [WARN ] 请求 method=POST path=/api/chain/verify status=404
+2026-09-05 11:05:41.367 [WARN ] 请求 method=GET path=/api/regulator/users status=403
+2026-09-05 11:06:00.815 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 11:06:28.452 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:06:28.515 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 11:06:28.517 [INFO ] ⛓ 上链成功 height=6 type=energy data=ENERGY-20260905-1788577588516 hash=7fbcbde4bef2a9761d3dd403e66c26085d902872b983b4dde20eef07daac7925 merkle=fac032c81b9ee0ab21997e29820616f29d46abea5d7bc77fee0fbcfcd339b9c0
+2026-09-05 11:06:28.518 [INFO ] [操作审计] op=energy_create operator=小微企业001(id=1,role=enterprise) biz=energy/ENERGY-20260905-1788577588516 hash=7fbcbde4bef2a9761d3dd403e66c26085d902872b983b4dde20eef07daac7925 detail=能耗上报: 电50.0kWh 气3.0m³ 水1.0t ip=::1
+2026-09-05 11:06:28.533 [INFO ] ⛓ 上链成功 height=7 type=credit data=CREDIT-20260905-0002 hash=4173a39d7fe151ded0bbea92c37d72a9fb9bf37823702c08657d5f44d91838e9 merkle=e7a05893e76113c13888b13cc157bdb7d6f51bc7b5cbc2a94bf63ca09b55adb3
+2026-09-05 11:06:28.533 [INFO ] [操作审计] op=credit_calculate operator=小微企业001(id=1,role=enterprise) biz=credit/CREDIT-20260905-0002 hash=4173a39d7fe151ded0bbea92c37d72a9fb9bf37823702c08657d5f44d91838e9 detail=碳积分核算: 排放46.04kgCO2 积分46.04 ip=::1
+2026-09-05 11:07:12.099 [INFO ] 数据表迁移完成
+2026-09-05 11:07:12.165 [INFO ] 预置账号创建成功: 小微企业001 role=enterprise
+2026-09-05 11:07:12.220 [INFO ] 预置账号创建成功: 园区管理员001 role=park_admin
+2026-09-05 11:07:12.276 [INFO ] 预置账号创建成功: 碳交易所001 role=exchange
+2026-09-05 11:07:12.326 [INFO ] 预置账号创建成功: 监管核查001 role=regulator
+2026-09-05 11:07:12.326 [INFO ] 数据库初始化完成: ./data/carbon_chain.db
+2026-09-05 11:07:12.334 [INFO ] ⛓ 创世区块创建并落库 height=0 hash=7d65fe9f37f463d9caee38e033ad467e1b0bc0ac625a72c7fefd11a13bb86ebd
+2026-09-05 11:07:12.334 [INFO ] ⛓ 模拟联盟链恢复完成，区块总数=1 最新高度=0
+2026-09-05 11:07:20.000 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:07:20.076 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 11:07:20.097 [WARN ] 请求 method=GET path=/api/regulator/platform/stats status=403
+2026-09-05 11:07:20.117 [WARN ] 请求 method=POST path=/api/auth/login status=400
+2026-09-05 11:07:52.301 [WARN ] 请求 method=GET path=/favicon.ico status=404
+2026-09-05 11:07:54.986 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:08:01.637 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 11:08:01.650 [WARN ] 请求 method=GET path=/park-admin status=404
+2026-09-05 11:08:37.345 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:08:38.940 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 11:08:38.951 [WARN ] 请求 method=GET path=/exchange status=404
+2026-09-05 11:10:06.262 [INFO ] 数据表迁移完成
+2026-09-05 11:10:06.272 [INFO ] 数据库初始化完成: ./data/carbon_chain.db
+2026-09-05 11:10:06.273 [INFO ] ⛓ 模拟联盟链恢复完成，区块总数=1 最新高度=0
+2026-09-05 11:10:50.983 [INFO ] 数据表迁移完成
+2026-09-05 11:10:50.992 [INFO ] 数据库初始化完成: ./data/carbon_chain.db
+2026-09-05 11:10:50.993 [INFO ] ⛓ 模拟联盟链恢复完成，区块总数=1 最新高度=0
+2026-09-05 11:11:38.284 [WARN ] 请求 method=GET path=/assets/not-exist.js status=404
+2026-09-05 11:12:22.079 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 11:12:28.535 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 11:12:46.971 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:12:55.191 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 11:13:02.062 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 11:13:07.461 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 11:13:56.156 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:28:10.719 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:28:19.322 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 11:28:31.099 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 11:28:35.986 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 11:28:56.380 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:31:23.644 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:31:43.668 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 11:31:59.381 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 11:32:10.271 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 11:32:20.958 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:32:29.966 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 11:32:34.686 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 11:32:37.477 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:32:41.407 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 11:32:44.616 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 11:32:46.288 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 11:41:18.015 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:41:30.836 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 11:41:37.186 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 11:41:58.333 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 11:48:41.369 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 11:48:51.704 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 12:02:41.058 [WARN ] 请求 method=POST path=/api/auth/login status=401
+2026-09-05 12:02:41.074 [WARN ] 请求 method=POST path=/api/auth/login status=401
+2026-09-05 12:02:41.075 [WARN ] 请求 method=POST path=/api/auth/login status=401
+2026-09-05 12:02:41.077 [WARN ] 请求 method=POST path=/api/auth/login status=401
+2026-09-05 12:02:48.434 [WARN ] 请求 method=POST path=/api/auth/login status=401
+2026-09-05 12:03:02.365 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 12:03:17.340 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 12:03:17.532 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 12:03:17.627 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 12:03:17.721 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 12:04:00.058 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 12:05:01.040 [WARN ] AI 生成企业减排建议失败，已降级模板: 未配置 DEEPSEEK_API_KEY
+2026-09-05 12:05:01.042 [INFO ] ⛓ 上链成功 height=1 type=report data=REPORT-20260905-1788581101040946 hash=60e5757b701a0296d58e92d177a5c4daadafbf6b7ca165d64735da4012b4e19a merkle=6e76aaf5defa9ff3b211ab5b529ddda2e279577cc0773d2a0f0132928ec37a39
+2026-09-05 12:05:01.043 [INFO ] [操作审计] op=report_generate operator=小微企业001(id=1,role=enterprise) biz=report/REPORT-20260905-1788581101040946 hash=60e5757b701a0296d58e92d177a5c4daadafbf6b7ca165d64735da4012b4e19a detail=AI报告生成: 小微企业001节能减排建议 (source=fallback) ip=::1
+2026-09-05 12:05:09.191 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 12:05:23.497 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 12:05:52.251 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 12:08:36.668 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 12:09:19.191 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 12:09:59.895 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 12:12:08.680 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 12:12:13.429 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 12:12:18.312 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 12:13:33.133 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 12:16:06.710 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 12:16:15.549 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 12:17:08.081 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 12:17:33.022 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 12:17:42.179 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 12:18:54.729 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 12:19:02.277 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 12:19:59.719 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 12:21:11.870 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 12:21:18.697 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 12:29:01.094 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 12:29:09.132 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 12:35:25.135 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 13:59:24.237 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 13:59:25.637 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 13:59:26.271 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 13:59:26.706 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 13:59:28.112 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 13:59:28.503 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 13:59:28.911 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 14:05:43.485 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 14:05:43.719 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 14:05:46.377 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 14:05:47.105 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 14:05:47.321 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 14:05:47.492 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 14:05:48.684 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 14:05:49.086 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 14:05:49.351 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 14:05:49.724 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 14:05:49.926 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 14:06:04.388 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 14:08:52.599 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 14:08:53.200 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 14:08:53.735 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 14:09:19.763 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 14:09:20.164 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 14:09:20.504 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 14:09:20.989 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 14:10:01.385 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 14:10:02.986 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 14:10:04.247 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 14:10:04.590 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 14:10:30.891 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 14:10:50.746 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 14:25:55.909 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 14:25:56.708 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 14:25:58.568 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 14:25:59.322 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 14:25:59.859 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 14:26:00.654 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 14:26:13.398 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 14:26:18.768 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 14:26:25.376 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 14:26:49.261 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 14:26:56.151 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 14:27:01.517 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 14:27:03.818 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 14:27:24.403 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 14:27:25.261 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 14:27:27.120 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 14:27:27.650 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 15:06:33.592 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 15:06:51.420 [INFO ] ⛓ 上链成功 height=2 type=energy data=ENERGY-20260905-1788592011418 hash=7ec528470b0f9319aa0e4a2eb14e5c4be5081806d29da2eaf2f8520cd6c66bd7 merkle=e0997f4d09f8755e864c244ec91454877640089865837436ba22727d73fd67b6
+2026-09-05 15:06:51.421 [INFO ] [操作审计] op=energy_create operator=小微企业001(id=1,role=enterprise) biz=energy/ENERGY-20260905-1788592011418 hash=7ec528470b0f9319aa0e4a2eb14e5c4be5081806d29da2eaf2f8520cd6c66bd7 detail=能耗上报: 电10.0kWh 气3.0m³ 水5.0t ip=::1
+2026-09-05 15:06:54.429 [INFO ] ⛓ 上链成功 height=3 type=credit data=CREDIT-20260905-0001 hash=414c6bab67dad28498df3ddcb05180f083120e93739e1afb8b74360207e53714 merkle=129db9dba4b125ed2806b8530d959d4e9e6a9f1eaccbafdd72404b83f247f742
+2026-09-05 15:06:54.429 [INFO ] [操作审计] op=credit_calculate operator=小微企业001(id=1,role=enterprise) biz=credit/CREDIT-20260905-0001 hash=414c6bab67dad28498df3ddcb05180f083120e93739e1afb8b74360207e53714 detail=碳积分核算: 排放15.84kgCO2 积分15.84 ip=::1
+2026-09-05 15:07:20.282 [INFO ] [操作审计] op=sell_order_create operator=小微企业001(id=1,role=enterprise) biz=sell_order/SELL-20260905-0001 hash= detail=创建卖出挂单: 5.00积分 @2.00元 ip=::1
+2026-09-05 15:07:45.842 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 15:07:47.636 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 15:08:06.152 [WARN ] 请求 method=POST path=/api/chain/upload status=404
+2026-09-05 15:08:16.489 [WARN ] 请求 method=POST path=/api/chain/upload status=404
+2026-09-05 15:08:17.204 [WARN ] 请求 method=POST path=/api/chain/upload status=404
+2026-09-05 15:08:34.209 [WARN ] AI 生成企业减排建议失败，已降级模板: 未配置 DEEPSEEK_API_KEY
+2026-09-05 15:08:34.211 [INFO ] ⛓ 上链成功 height=4 type=report data=REPORT-20260905-1788592114209301 hash=4df29933bad2a4b30db836b878bbb23e653eedec8dd3849fdef6970a88dc224f merkle=77802a0eda50610b9a50955756a2a22e9c0fb38aa397e9138694387ead649dc0
+2026-09-05 15:08:34.212 [INFO ] [操作审计] op=report_generate operator=小微企业001(id=1,role=enterprise) biz=report/REPORT-20260905-1788592114209301 hash=4df29933bad2a4b30db836b878bbb23e653eedec8dd3849fdef6970a88dc224f detail=AI报告生成: 小微企业001节能减排建议 (source=fallback) ip=::1
+2026-09-05 15:08:38.076 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 15:08:40.750 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 15:08:46.611 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 15:09:23.221 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 15:09:24.271 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 15:09:29.946 [WARN ] AI 生成园区低碳报告失败，已降级模板: 未配置 DEEPSEEK_API_KEY
+2026-09-05 15:09:29.949 [INFO ] ⛓ 上链成功 height=5 type=report data=REPORT-20260905-1788592169946549 hash=cf473c798664c08c2260c655e17876aa1373e9943c88ff3e553d13f73960f4c5 merkle=7aabaa72c06163376e0d347aed94b9705eabb11ea8327f4cd1ce4c77c37e333f
+2026-09-05 15:09:29.949 [INFO ] [操作审计] op=report_generate operator=园区管理员001(id=2,role=park_admin) biz=report/REPORT-20260905-1788592169946549 hash=cf473c798664c08c2260c655e17876aa1373e9943c88ff3e553d13f73960f4c5 detail=AI报告生成: 绿色科技示范园区园区低碳发展报告 (source=fallback) ip=::1
+2026-09-05 15:09:39.111 [WARN ] AI 生成园区低碳报告失败，已降级模板: 未配置 DEEPSEEK_API_KEY
+2026-09-05 15:09:39.112 [INFO ] ⛓ 上链成功 height=6 type=report data=REPORT-20260905-1788592179111099 hash=e2b3e3aca6fffacddd9b926bac5ff3b5185f546aa3d65ed4add64152bd6e6063 merkle=0bad2f396390ada01c7ff8a9450bdb195d262e76a238bc78713a0a492c13fece
+2026-09-05 15:09:39.113 [INFO ] [操作审计] op=report_generate operator=园区管理员001(id=2,role=park_admin) biz=report/REPORT-20260905-1788592179111099 hash=e2b3e3aca6fffacddd9b926bac5ff3b5185f546aa3d65ed4add64152bd6e6063 detail=AI报告生成: 小微企业001园区低碳发展报告 (source=fallback) ip=::1
+2026-09-05 15:09:44.153 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 15:09:53.619 [WARN ] 请求 method=POST path=/api/exchange/match status=404
+2026-09-05 15:11:15.060 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 15:11:41.174 [WARN ] 请求 method=POST path=/api/regulator/verify status=404
+2026-09-05 15:11:52.161 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 15:11:53.071 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 15:12:27.931 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 15:12:33.003 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 15:12:52.051 [WARN ] 请求 method=POST path=/api/exchange/match status=404
+2026-09-05 15:12:54.696 [ERROR] 交易撮合失败: 买卖双方不能为同一企业
+2026-09-05 15:12:54.696 [ERROR] 请求 method=POST path=/api/exchange/match status=500
+2026-09-05 15:12:55.244 [ERROR] 交易撮合失败: 买卖双方不能为同一企业
+2026-09-05 15:12:55.244 [ERROR] 请求 method=POST path=/api/exchange/match status=500
+2026-09-05 15:12:55.523 [ERROR] 交易撮合失败: 买卖双方不能为同一企业
+2026-09-05 15:12:55.523 [ERROR] 请求 method=POST path=/api/exchange/match status=500
+2026-09-05 15:12:58.376 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:13:08.964 [WARN ] 请求 method=POST path=/api/auth/login status=401
+2026-09-05 15:13:14.142 [WARN ] 请求 method=POST path=/api/auth/login status=401
+2026-09-05 15:14:07.998 [INFO ] [操作审计] op=register operator=(id=0,role=) biz=user/小微企业002 hash= detail=新企业账号注册 ip=::1
+2026-09-05 15:14:12.510 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业002 hash= detail=用户登录 ip=::1
+2026-09-05 15:14:15.934 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 15:14:22.990 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:14:24.226 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:14:24.490 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:14:24.742 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:14:26.735 [ERROR] 交易撮合失败: 买卖双方不能为同一企业
+2026-09-05 15:14:26.735 [ERROR] 请求 method=POST path=/api/exchange/match status=500
+2026-09-05 15:14:28.570 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:14:29.614 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 15:14:33.816 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业002 hash= detail=用户登录 ip=::1
+2026-09-05 15:14:53.391 [INFO ] ⛓ 上链成功 height=7 type=energy data=ENERGY-20260905-1788592493388 hash=7f76421ee6d4b1b3e356ae6f479f132b8c1dfb2cb384051efe4534f2dfe905f5 merkle=c6a3d37fbd0f59f14b9737f903a213f02e01a849c8da30e180dee8d0150cf67f
+2026-09-05 15:14:53.391 [INFO ] [操作审计] op=energy_create operator=小微企业002(id=5,role=enterprise) biz=energy/ENERGY-20260905-1788592493388 hash=7f76421ee6d4b1b3e356ae6f479f132b8c1dfb2cb384051efe4534f2dfe905f5 detail=能耗上报: 电16.0kWh 气20.0m³ 水7.0t ip=::1
+2026-09-05 15:14:55.418 [INFO ] ⛓ 上链成功 height=8 type=credit data=CREDIT-20260905-0002 hash=c6fed88fb3473bd91cc48e8b146a484b023c83a9d3706a91e5546f566d9bdbd2 merkle=806e1d185c08f5f6d9d3bc5d410e2de558e61dc59f72a27ff407262250133979
+2026-09-05 15:14:55.418 [INFO ] [操作审计] op=credit_calculate operator=小微企业002(id=5,role=enterprise) biz=credit/CREDIT-20260905-0002 hash=c6fed88fb3473bd91cc48e8b146a484b023c83a9d3706a91e5546f566d9bdbd2 detail=碳积分核算: 排放57.95kgCO2 积分57.95 ip=::1
+2026-09-05 15:15:05.111 [INFO ] ⛓ 上链成功 height=9 type=energy data=ENERGY-20260905-1788592505108 hash=8b51620da97e0cc8d8e58b55cb9799fd4d3d0949e1c3d98dfb46a541c3e0cd07 merkle=c9eb90ce21222e1040719b8a4a62a71684a88d4de4d85b0e182474fb77d8b6b8
+2026-09-05 15:15:05.112 [INFO ] [操作审计] op=energy_create operator=小微企业002(id=5,role=enterprise) biz=energy/ENERGY-20260905-1788592505108 hash=8b51620da97e0cc8d8e58b55cb9799fd4d3d0949e1c3d98dfb46a541c3e0cd07 detail=能耗上报: 电1.0kWh 气0.5m³ 水0.3t ip=::1
+2026-09-05 15:15:08.174 [INFO ] ⛓ 上链成功 height=10 type=credit data=CREDIT-20260905-0003 hash=e354c6763b2b08abad088c9c0030a61608edef3127e228571d9bcf5c65da83b8 merkle=d1ffb45f14421660e48cce29ef73004751d65f03582c92be02c1039e9d0bcc20
+2026-09-05 15:15:08.175 [INFO ] [操作审计] op=credit_calculate operator=小微企业002(id=5,role=enterprise) biz=credit/CREDIT-20260905-0003 hash=e354c6763b2b08abad088c9c0030a61608edef3127e228571d9bcf5c65da83b8 detail=碳积分核算: 排放1.96kgCO2 积分1.96 ip=::1
+2026-09-05 15:15:26.383 [INFO ] [操作审计] op=sell_order_create operator=小微企业002(id=5,role=enterprise) biz=sell_order/SELL-20260905-0003 hash= detail=创建卖出挂单: 1.00积分 @3.00元 ip=::1
+2026-09-05 15:15:28.532 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 15:15:34.036 [INFO ] ⛓ 上链成功 height=11 type=transaction data=TX-20260905-0002 hash=3bf6b537923eb496e7e1e2e320d58e7aafeee280b769476ca4ef15b04e7ace02 merkle=3b73eb2a865509671b3eff35a6c0626e41ad2ec68c618d232fa350288545027b
+2026-09-05 15:15:34.036 [INFO ] [操作审计] op=trade_match operator=碳交易所001(id=3,role=exchange) biz=transaction/TX-20260905-0002 hash=3bf6b537923eb496e7e1e2e320d58e7aafeee280b769476ca4ef15b04e7ace02 detail=交易撮合成交: 数量1.00积分 单价3.00元 总额3.00元 ip=::1
+2026-09-05 15:15:38.748 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:15:39.980 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:15:40.281 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:15:40.609 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:15:40.864 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:15:41.171 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:15:45.280 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:15:54.157 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:15:54.369 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:15:54.582 [WARN ] 请求 method=POST path=/api/exchange/match status=400
+2026-09-05 15:17:24.324 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 15:19:14.181 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 15:19:15.910 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 15:32:45.812 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
+2026-09-05 15:32:55.175 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/园区管理员001 hash= detail=用户登录 ip=::1
+2026-09-05 15:33:00.256 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/碳交易所001 hash= detail=用户登录 ip=::1
+2026-09-05 15:33:03.851 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/监管核查001 hash= detail=用户登录 ip=::1
+2026-09-05 15:33:08.019 [INFO ] [操作审计] op=login operator=(id=0,role=) biz=user/小微企业001 hash= detail=用户登录 ip=::1
