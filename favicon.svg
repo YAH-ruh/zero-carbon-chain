@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#047857"/>
+      <stop offset="1" stop-color="#34d399"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#d1fae5"/>
+    </linearGradient>
+  </defs>
+  <!-- 深绿渐变圆角底 -->
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <!-- 碳叶：绿色低碳意象 -->
+  <path d="M32 8.5 C41.5 12.5 44 24 32 29.5 C20 24 22.5 12.5 32 8.5 Z" fill="url(#leaf)"/>
+  <path d="M32 11.5 V27" stroke="#047857" stroke-width="1.8" stroke-linecap="round" opacity="0.5"/>
+  <path d="M32 16.5 L27.8 19.5 M32 20.5 L36.2 23.5" stroke="#047857" stroke-width="1.4" stroke-linecap="round" opacity="0.38"/>
+  <!-- 相扣链环：区块链可信链接意象 -->
+  <rect x="10" y="36.5" width="24" height="14" rx="7" fill="none" stroke="#ffffff" stroke-width="4"/>
+  <rect x="30" y="36.5" width="24" height="14" rx="7" fill="none" stroke="#ffffff" stroke-width="4"/>
+</svg>

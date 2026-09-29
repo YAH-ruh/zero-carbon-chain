@@ -1,0 +1,21 @@
+{
+  "network": "sepolia",
+  "deployedAt": "2026-09-29T15:58:06.969Z",
+  "contracts": {
+    "CarbonCreditToken": {
+      "address": "0x674e0C7Bb57441C584387FeB2593E2CDAF9B0806",
+      "abi": "artifacts/contracts/CarbonCreditToken.sol/CarbonCreditToken.json"
+    },
+    "CreditTrading": {
+      "address": "0x7385BD194eA16ab46b912D59FE8358396CAF49D4",
+      "abi": "artifacts/contracts/CreditTrading.sol/CreditTrading.json"
+    },
+    "CarbonAttestation": {
+      "address": "0xac91fdd28220FDf7B572e1bfC020b1D133fd40B9",
+      "abi": "artifacts/contracts/CarbonAttestation.sol/CarbonAttestation.json"
+    }
+  },
+  "signers": {
+    "deployer": "0x43443cDE2c12126628087AeA281715eCFDF0c20F"
+  }
+}
