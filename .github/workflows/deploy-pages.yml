@@ -31,7 +31,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
       # 不用 npm ci：其配合 npm 缓存时存在跳过 esbuild/rollup 平台二进制的已知问题，
       # npm install 与本地验证成功的安装路径保持一致
@@ -40,9 +40,17 @@ jobs:
         run: npm install --no-audit --no-fund
 
       # GITHUB_PAGES_REPO 决定 vite base（/zero-carbon-chain/），合约地址已固化在 public/contracts.json
+      # 构建失败时把日志尾部写入 step summary（check-run API 可匿名读取，便于远程诊断）
       - name: Build
         working-directory: frontend
-        run: npm run build
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run build 2>&1 | tee /tmp/build.log || {
+            echo "### vite build 失败日志（尾部 40 行）" >> "$GITHUB_STEP_SUMMARY"
+            tail -40 /tmp/build.log >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          }
         env:
           GITHUB_PAGES_REPO: zero-carbon-chain
 
