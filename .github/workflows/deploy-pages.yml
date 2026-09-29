@@ -40,17 +40,21 @@ jobs:
         run: npm install --no-audit --no-fund
 
       # GITHUB_PAGES_REPO 决定 vite base（/zero-carbon-chain/），合约地址已固化在 public/contracts.json
-      # 构建失败时把日志尾部写入 step summary（check-run API 可匿名读取，便于远程诊断）
+      # 构建失败时日志尾部写入 step summary 并上传 paste.rs（匿名可读，便于远程诊断）
       - name: Build
         working-directory: frontend
         shell: bash
         run: |
           set -o pipefail
-          npm run build 2>&1 | tee /tmp/build.log || {
-            echo "### vite build 失败日志（尾部 40 行）" >> "$GITHUB_STEP_SUMMARY"
-            tail -40 /tmp/build.log >> "$GITHUB_STEP_SUMMARY"
+          if npm run build 2>&1 | tee /tmp/build.log; then
+            echo "✓ vite build 成功"
+          else
+            echo "### vite build 失败日志（尾部 50 行）" >> "$GITHUB_STEP_SUMMARY" || true
+            tail -50 /tmp/build.log >> "$GITHUB_STEP_SUMMARY" || true
+            URL=$(tail -120 /tmp/build.log | curl -sS --max-time 20 --data-binary @- https://paste.rs) || true
+            echo "完整日志快照: $URL" >> "$GITHUB_STEP_SUMMARY" || true
             exit 1
-          }
+          fi
         env:
           GITHUB_PAGES_REPO: zero-carbon-chain
 
