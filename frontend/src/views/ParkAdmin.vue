@@ -235,7 +235,7 @@ async function handleReport() {
 .dash-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
 .dash-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px; }
 .dash-info { margin-bottom: 8px; }
-.dash-val { display: block; font-size: 24px; font-weight: 700; color: #1e293b; }
+.dash-val { display: block; font-size: 24px; font-weight: 700; color: #14532d; }
 .dash-label { display: block; font-size: 12px; color: #94a3b8; margin-top: 2px; }
 .dash-bar { height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden; }
 .dash-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }

@@ -1,6 +1,6 @@
 #!/bin/bash
 # ============================================================
-# 微碳链 - 全流程 API 接口测试脚本 (Bash)
+# 零碳微证 - 全流程 API 接口测试脚本 (Bash)
 # 使用方式: 先启动服务 weitanlian.exe，再运行本脚本
 # 运行: bash test/test_api.sh
 # 也可在 WSL / Git Bash / Linux / macOS 下运行

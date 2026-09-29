@@ -24,7 +24,7 @@ func SetupRouter() *gin.Engine {
 	r.GET("/api/health", func(c *gin.Context) {
 		response.OK(c, gin.H{
 			"status":  "ok",
-			"service": "微碳链 - 区块链碳积分可信交易平台",
+			"service": "零碳微证 - 区块链碳积分可信交易平台",
 		})
 	})
 
@@ -41,6 +41,9 @@ func SetupRouter() *gin.Engine {
 	{
 		// 当前用户信息
 		api.GET("/auth/me", handlers.GetCurrentUser)
+
+		// 企业名录(所有登录角色可查看，仅展示不编辑)
+		api.GET("/enterprises", handlers.ListEnterprises)
 
 		// ==================== 区块链接口(所有角色可用，溯源/哈希展示) ====================
 		chain := api.Group("/chain")
@@ -65,11 +68,12 @@ func SetupRouter() *gin.Engine {
 		carbon := api.Group("/carbon")
 		carbon.Use(middleware.RoleRequired(models.RoleEnterprise, models.RoleExchange, models.RoleParkAdmin, models.RoleRegulator))
 		{
-			carbon.POST("/calculate", handlers.CalculateAndUpload) // 核算碳积分并上链
-			carbon.GET("/my-credits", handlers.ListMyCredits)      // 查看碳积分
-			carbon.GET("/stats", handlers.GetCarbonStats)          // 碳数据统计
-			carbon.POST("/sell", handlers.CreateSellOrder)         // 创建挂单卖出
-			carbon.GET("/sell-orders", handlers.ListSellOrders)    // 查看挂单列表
+			carbon.POST("/calculate", handlers.CalculateAndUpload)       // 核算碳积分并上链
+			carbon.GET("/my-credits", handlers.ListMyCredits)            // 查看碳积分
+			carbon.GET("/stats", handlers.GetCarbonStats)                // 碳数据统计
+			carbon.POST("/sell", handlers.CreateSellOrder)               // 创建挂单卖出
+			carbon.POST("/sell-orders/cancel", handlers.CancelSellOrder) // 撤销挂单(解除积分冻结)
+			carbon.GET("/sell-orders", handlers.ListSellOrders)          // 查看挂单列表
 		}
 
 		// ==================== 企业 AI 减排建议接口 ====================
@@ -112,6 +116,139 @@ func SetupRouter() *gin.Engine {
 			regulator.GET("/users", handlers.GetAllUsers)               // 查看所有用户
 		}
 	}
+
+	// ==================== 创新功能1: IoT设备管理 ====================
+	iot := api.Group("/iot")
+	iot.Use(middleware.RoleRequired(models.RoleEnterprise, models.RoleParkAdmin, models.RoleRegulator))
+	{
+		iot.GET("/devices", handlers.ListIoTDevices)
+		iot.POST("/devices/register", handlers.RegisterIoTDevice)
+		iot.POST("/record", handlers.CreateIoTRecord)
+		iot.POST("/manual-record", handlers.CreateManualRecord)
+		iot.GET("/records", handlers.ListIoTRecords)
+	}
+
+	// ==================== 创新功能2: ZKP隐私证明 & PQC抗量子 ====================
+	zkp := api.Group("/zkp")
+	zkp.Use(middleware.RoleRequired(models.RoleEnterprise, models.RoleRegulator))
+	{
+		zkp.POST("/proof", handlers.GenerateZKPProof)
+		zkp.GET("/my-proofs", handlers.ListMyZKProofs)
+		zkp.POST("/export-credential", handlers.ExportCredential)
+	}
+	pqc := api.Group("/pqc")
+	pqc.Use(middleware.RoleRequired(models.RoleRegulator))
+	{
+		pqc.POST("/verify", handlers.PQCVerify)
+	}
+
+	// ==================== 创新功能3: RWA碳资产拓展 ====================
+	rwa := api.Group("/rwa")
+	rwa.Use(middleware.RoleRequired(models.RoleExchange, models.RoleRegulator))
+	{
+		rwa.GET("/trade-orders", handlers.ListRWATradeOrders)
+		rwa.POST("/lease-order", handlers.CreateLeaseOrder)     // 发布租赁挂单(绑定碳积分凭证)
+		rwa.POST("/forward-order", handlers.CreateForwardOrder) // 发布远期挂单(绑定碳积分凭证)
+	}
+	pledge := api.Group("/pledge")
+	pledge.Use(middleware.RoleRequired(models.RoleEnterprise, models.RoleExchange, models.RoleRegulator))
+	{
+		pledge.POST("/create", handlers.CreatePledge)
+		pledge.POST("/redeem", handlers.RedeemPledge) // 质押赎回(解除积分锁定)
+		pledge.GET("/list", handlers.ListPledges)
+	}
+	arbitration := api.Group("/arbitration")
+	arbitration.Use(middleware.RoleRequired(models.RoleEnterprise, models.RoleExchange, models.RoleRegulator))
+	{
+		arbitration.POST("/create", handlers.CreateArbitration)
+		arbitration.GET("/list", handlers.ListArbitrations)
+		arbitration.GET("/onchain-transactions", handlers.ListOnchainTransactions) // 已上链交易下拉数据源
+		arbitration.POST("/resolve", handlers.ResolveArbitration)
+	}
+	incentive := api.Group("/incentive")
+	incentive.Use(middleware.RoleRequired(models.RoleExchange, models.RoleRegulator))
+	{
+		incentive.GET("/pool", handlers.GetIncentivePool)
+		incentive.POST("/claim", handlers.ClaimIncentive)
+	}
+	archive := api.Group("/archive")
+	{
+		// 档案列表所有登录角色可见(企业查看自身积分档案, 核查方查看全部)
+		archive.GET("/list", handlers.ListCarbonArchive)
+		// 核查建档仅交易所/监管可操作
+		archive.POST("/create", middleware.RoleRequired(models.RoleExchange, models.RoleRegulator), handlers.CreateCarbonArchive)
+	}
+
+	// ==================== 创新功能4: 区块链AI Agent ====================
+	agent := api.Group("/agent")
+	agent.Use(middleware.RoleRequired(models.RoleEnterprise, models.RoleParkAdmin, models.RoleExchange, models.RoleRegulator))
+	{
+		agent.POST("/trade", handlers.TriggerTradeAgent)
+		agent.POST("/risk", handlers.TriggerRiskAgent)
+		agent.POST("/dispatch", handlers.TriggerDispatchAgent)
+		agent.GET("/records", handlers.ListAgentRecords)
+		agent.GET("/zk-anomaly", handlers.GetZKAIAnomalyAlert)
+	}
+
+	// ==================== 创新功能5: 扩容架构 ====================
+	rollup := api.Group("/rollup")
+	rollup.Use(middleware.RoleRequired(models.RoleRegulator))
+	{
+		rollup.GET("/batches", handlers.GetRollupBatchList)
+		rollup.GET("/unpacked-transactions", handlers.ListUnpackedTransactions)
+		rollup.POST("/create", handlers.CreateRollupBatch)
+		rollup.POST("/verify", handlers.VerifyRollupBatch)
+		rollup.GET("/batch/transactions", handlers.GetRollupBatchTransactions)
+	}
+	da := api.Group("/da")
+	da.Use(middleware.RoleRequired(models.RoleRegulator))
+	{
+		da.POST("/commit", handlers.CreateDACommitment)
+		da.GET("/commitments", handlers.ListDACommitments)
+	}
+
+	// ==================== 创新功能6: 国产主权链 ====================
+	sovereign := api.Group("/sovereign")
+	sovereign.Use(middleware.RoleRequired(models.RoleRegulator))
+	{
+		sovereign.GET("/permissions", handlers.GetPermissionPolicies)
+		sovereign.POST("/permissions", handlers.CreatePermissionPolicy)
+		sovereign.GET("/anonymous-identity", handlers.GetAnonymousIdentity)
+		sovereign.POST("/anonymous-identity", handlers.GenerateAnonymousIdentity)
+		sovereign.POST("/cross-chain-report", handlers.CreateCrossChainReport)
+		sovereign.GET("/cross-chain-reports", handlers.ListCrossChainReports)
+	}
+
+	// ==================== Dashboard & 数据大屏 ====================
+	dashboard := api.Group("/dashboard")
+	{
+		dashboard.GET("/stats", handlers.GetDashboardStats)
+	}
+	datav := api.Group("/datav")
+	datav.Use(middleware.RoleRequired(models.RoleParkAdmin, models.RoleRegulator))
+	{
+		datav.GET("/overview", handlers.GetDatavOverview)
+		datav.GET("/park-map", handlers.GetParkMap)
+		datav.GET("/charts", handlers.GetDatavCharts)
+	}
+
+	// ==================== 产品碳足迹 ====================
+	footprint := api.Group("/footprint")
+	footprint.Use(middleware.RoleRequired(models.RoleEnterprise, models.RoleRegulator))
+	{
+		footprint.GET("/list", handlers.ListProductFootprints)
+		footprint.POST("/create", handlers.CreateProductFootprint)
+	}
+
+	// ==================== 审计日志 ====================
+	audit := api.Group("/audit")
+	audit.Use(middleware.RoleRequired(models.RoleRegulator))
+	{
+		audit.GET("/logs", handlers.ListOperationLogs)
+	}
+
+	// ==================== AI 多轮聊天助手（所有角色可用） ====================
+	api.POST("/chat", handlers.Chat)
 
 	return r
 }

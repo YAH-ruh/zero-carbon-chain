@@ -1,0 +1,18 @@
+{
+  "name": "weitanlian-contracts",
+  "version": "1.0.0",
+  "description": "零碳微证 · 碳积分可信交易平台 Solidity 智能合约",
+  "scripts": {
+    "compile": "hardhat compile",
+    "node": "hardhat node",
+    "deploy": "hardhat run scripts/deploy.js --network localhost",
+    "test": "hardhat test"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "hardhat": "^2.22.17"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2"
+  }
+}

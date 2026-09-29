@@ -71,6 +71,9 @@ func InitDB() {
 	// 幂等初始化预置演示账号
 	initPresetUsers()
 
+	// 创新功能预置数据(激励池、权限策略等)
+	initPresetData()
+
 	logger.Info("数据库初始化完成: %s", cfg.DBPath)
 }
 
@@ -90,6 +93,27 @@ func autoMigrate() {
 		&models.BlockRecord{},
 		&models.ReportRecord{},
 		&models.OperationLog{},
+		// 创新功能: IoT设备管理
+		&models.IoTDevice{},
+		&models.IoTRecord{},
+		// 创新功能: ZKP隐私证明
+		&models.ZKProofRecord{},
+		// 创新功能: RWA碳资产拓展
+		&models.PledgeOrder{},
+		&models.ArbitrationCase{},
+		&models.IncentivePool{},
+		&models.CarbonArchive{},
+		// 创新功能: 区块链AI
+		&models.AgentRecord{},
+		// 创新功能: 扩容架构
+		&models.RollupBatch{},
+		&models.DACommitment{},
+		// 创新功能: 国产主权链
+		&models.PermissionPolicy{},
+		&models.AnonymousIdentity{},
+		&models.CrossChainReport{},
+		// 产品碳足迹
+		&models.ProductFootprint{},
 	)
 	if err != nil {
 		log.Fatalf("数据库迁移失败: %v", err)
@@ -150,5 +174,53 @@ func initPresetUsers() {
 		}
 		fmt.Printf("✔ 预置账号已创建: %s / %s (角色: %s)\n", u.Username, u.Password, u.Role)
 		logger.Info("预置账号创建成功: %s role=%s", u.Username, u.Role)
+	}
+}
+
+// initPresetData 创新功能预置数据(激励池、权限策略等)
+func initPresetData() {
+	// 预置激励池
+	var poolCount int64
+	DB.Model(&models.IncentivePool{}).Count(&poolCount)
+	if poolCount == 0 {
+		DB.Create(&models.IncentivePool{
+			PoolName:     "碳链生态激励池",
+			TotalCredits: 100000,
+			Remaining:    100000,
+			RewardRate:   0.1,
+			Status:       "active",
+		})
+	}
+
+	// 预置权限策略
+	var policyCount int64
+	DB.Model(&models.PermissionPolicy{}).Count(&policyCount)
+	if policyCount == 0 {
+		policies := []models.PermissionPolicy{
+			{PolicyNo: "POL-001", TargetRole: "enterprise", Resource: "energy_data", Action: "write", Granularity: "fine"},
+			{PolicyNo: "POL-002", TargetRole: "enterprise", Resource: "credit_data", Action: "read", Granularity: "fine"},
+			{PolicyNo: "POL-003", TargetRole: "park_admin", Resource: "park_data", Action: "admin", Granularity: "fine"},
+			{PolicyNo: "POL-004", TargetRole: "exchange", Resource: "trade_data", Action: "admin", Granularity: "fine"},
+			{PolicyNo: "POL-005", TargetRole: "regulator", Resource: "all", Action: "admin", Granularity: "coarse"},
+		}
+		for _, p := range policies {
+			DB.Create(&p)
+		}
+	}
+
+	// 预置示例Rollup批次
+	var batchCount int64
+	DB.Model(&models.RollupBatch{}).Count(&batchCount)
+	if batchCount == 0 {
+		DB.Create(&models.RollupBatch{
+			BatchNo:    "ROLLUP-001",
+			FromBlock:  1,
+			ToBlock:    10,
+			TxCount:    5,
+			StateRoot:  "0x3a4b8c1d2e5f...",
+			FaultProof: "模拟故障证明数据: 批处理状态根一致性校验通过",
+			Status:     "verified",
+			VerifiedBy: "监管核查001",
+		})
 	}
 }

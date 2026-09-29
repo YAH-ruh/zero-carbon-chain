@@ -208,7 +208,7 @@ onBeforeUnmount(() => {
 .page { max-width: 1160px; margin: 0 auto; }
 .hero { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
 .hero-left { display: flex; align-items: center; gap: 14px; }
-.hero-icon { width: 46px; height: 46px; border-radius: 12px; background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3); }
+.hero-icon { width: 46px; height: 46px; border-radius: 12px; background: linear-gradient(135deg, #1d4ed8, #0d9488); color: #fff; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(59, 130, 246, 0.3); }
 .hero-icon svg { width: 24px; height: 24px; }
 .hero h1 { font-size: 22px; font-weight: 700; color: var(--text-1); }
 .hero p { font-size: 12px; color: var(--text-4); margin-top: 2px; }

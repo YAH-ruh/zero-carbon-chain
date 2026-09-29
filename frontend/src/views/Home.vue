@@ -7,9 +7,13 @@
     <section class="hero">
       <div class="hero-inner">
         <p class="eyebrow"><span class="eyebrow-icon"><Aim /></span>区块链碳积分可信交易平台</p>
-        <h1>微碳链</h1>
+        <h1>
+          <img class="brand-mark" src="/favicon.svg" alt="零碳微证标识" />
+          <span class="brand-em">零</span>碳微证
+        </h1>
+        <p class="hero-sub">—— ZK-Rollup 隐私核算与 AI 核验预警驱动的小微企业碳积分可信交易平台 ——</p>
         <p class="tagline">
-          面向园区小微企业的碳资产可信管理原型系统。以本地模拟联盟链为底座，
+          面向园区企业的碳资产可信管理原型系统。以本地模拟联盟链为底座，
           打通「能耗上报 → 碳积分核算 → 挂单交易 → 链上存证 → 监管溯源」的业务闭环。
         </p>
         <div class="hero-actions">
@@ -84,7 +88,7 @@
     </section>
 
     <footer class="home-footer">
-      <span>微碳链 · 区块链碳积分可信交易平台演示系统</span>
+      <span>零碳微证 · ZK-Rollup 隐私核算与 AI 核验预警驱动的小微企业碳积分可信交易平台</span>
     </footer>
   </div>
 </template>
@@ -103,7 +107,7 @@ const enterLoading = ref(false)
 
 // 四大角色定义(展示名正式，无 001 后缀)
 const roles = [
-  { name: '小微企业', account: '小微企业001', icon: 'OfficeBuilding', tint: '#e6f7f5', color: '#0d9488', act: '手动上报企业能耗，自动核算后生成碳积分资产' },
+  { name: '小微企业', account: '绿恒节能科技有限公司', icon: 'OfficeBuilding', tint: '#e6f7f5', color: '#0d9488', act: '手动上报企业能耗，自动核算后生成碳积分资产' },
   { name: '园区管理员', account: '园区管理员001', icon: 'Histogram', tint: '#e8f2fe', color: '#2563eb', act: '审核企业入驻，统筹园区碳排放总量与积分分布' },
   { name: '碳交易所', account: '碳交易所001', icon: 'TrendCharts', tint: '#fdf0e4', color: '#d97706', act: '发布卖方挂单，撮合成交实现碳积分权属流转' },
   { name: '监管核查', account: '监管核查001', icon: 'Monitor', tint: '#f0eefe', color: '#7c3aed', act: '监督链上全量存证，数据防篡改校验与平台风险监控' },
@@ -187,6 +191,19 @@ async function goSystem() {
   font-weight: 700;
   letter-spacing: 0.06em;
   color: var(--text-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+.brand-mark { width: 52px; height: 52px; border-radius: 13px; box-shadow: 0 6px 18px rgba(5, 150, 105, 0.3); }
+.brand-em { color: var(--primary-green, #059669); }
+.hero-sub {
+  margin: 14px auto 0;
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--text-2);
 }
 .tagline {
   max-width: 600px;

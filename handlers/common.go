@@ -99,12 +99,54 @@ func loadBusinessData(dataType, dataID string) (interface{}, error) {
 		}
 		return &v, nil
 	case models.DataTypeReport:
-		var v models.ReportRecord
-		if err := database.DB.Where("report_no = ?", dataID).First(&v).Error; err != nil {
-			return nil, fmt.Errorf("报告记录未找到(单号: %s)", dataID)
-		}
-		return &v, nil
-	default:
+			var v models.ReportRecord
+			if err := database.DB.Where("report_no = ?", dataID).First(&v).Error; err != nil {
+				return nil, fmt.Errorf("报告记录未找到(单号: %s)", dataID)
+			}
+			return &v, nil
+		case models.DataTypeIoTRecord:
+			var v models.IoTRecord
+			if err := database.DB.Where("record_no = ?", dataID).First(&v).Error; err != nil {
+				return nil, fmt.Errorf("IoT记录未找到(单号: %s)", dataID)
+			}
+			return &v, nil
+		case models.DataTypePledge:
+			var v models.PledgeOrder
+			if err := database.DB.Where("pledge_no = ?", dataID).First(&v).Error; err != nil {
+				return nil, fmt.Errorf("质押订单未找到(单号: %s)", dataID)
+			}
+			return &v, nil
+		case models.DataTypeArbitration:
+			var v models.ArbitrationCase
+			if err := database.DB.Where("case_no = ?", dataID).First(&v).Error; err != nil {
+				return nil, fmt.Errorf("仲裁案件未找到(单号: %s)", dataID)
+			}
+			return &v, nil
+		case models.DataTypeAgent:
+			var v models.AgentRecord
+			if err := database.DB.Where("agent_no = ?", dataID).First(&v).Error; err != nil {
+				return nil, fmt.Errorf("Agent记录未找到(单号: %s)", dataID)
+			}
+			return &v, nil
+		case models.DataTypeZKProof:
+			var v models.ZKProofRecord
+			if err := database.DB.Where("proof_no = ?", dataID).First(&v).Error; err != nil {
+				return nil, fmt.Errorf("ZKP证明未找到(单号: %s)", dataID)
+			}
+			return &v, nil
+		case models.DataTypeArchive:
+			var v models.CarbonArchive
+			if err := database.DB.Where("archive_no = ?", dataID).First(&v).Error; err != nil {
+				return nil, fmt.Errorf("碳资产档案未找到(单号: %s)", dataID)
+			}
+			return &v, nil
+		case models.DataTypeCrossChain:
+			var v models.CrossChainReport
+			if err := database.DB.Where("report_no = ?", dataID).First(&v).Error; err != nil {
+				return nil, fmt.Errorf("跨链上报未找到(单号: %s)", dataID)
+			}
+			return &v, nil
+		default:
 		return nil, fmt.Errorf("不支持的业务类型: %s", dataType)
 	}
 }

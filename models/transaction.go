@@ -17,6 +17,7 @@ type Transaction struct {
 	TotalAmount float64   `json:"total_amount"`                     // 成交总金额(元)
 	BlockHash   string    `json:"block_hash" gorm:"size:128"`       // 交易上链后的区块哈希
 	OnChain     bool      `json:"on_chain" gorm:"default:false"`    // 是否已上链存证
+	RollupBatchNo string  `json:"rollup_batch_no" gorm:"size:64;index;default:''"` // 归属ZK-Rollup批次号(空=未打包, 同一交易不可重复打包)
 	CreatedAt   time.Time `json:"created_at"`
 	Seller      User      `json:"seller,omitempty" gorm:"foreignKey:SellerID"` // 卖方用户信息
 	Buyer       User      `json:"buyer,omitempty" gorm:"foreignKey:BuyerID"`   // 买方用户信息

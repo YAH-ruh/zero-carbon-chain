@@ -1,0 +1,21 @@
+{
+  "network": "ganache",
+  "deployedAt": "2026-09-14T10:38:10.613Z",
+  "contracts": {
+    "CarbonCreditToken": {
+      "address": "0x9A7b0C6F69Fbd26c6274e01dbfAbBF58E01dAEd2",
+      "abi": "artifacts/contracts/CarbonCreditToken.sol/CarbonCreditToken.json"
+    },
+    "CreditTrading": {
+      "address": "0x3738d8Dd225047dcb1Eed2304cBC9C64746C6ECE",
+      "abi": "artifacts/contracts/CreditTrading.sol/CreditTrading.json"
+    },
+    "CarbonAttestation": {
+      "address": "0x2AF751ff438D746e6989fEe10D7bfb0F6181940e",
+      "abi": "artifacts/contracts/CarbonAttestation.sol/CarbonAttestation.json"
+    }
+  },
+  "signers": {
+    "deployer": "0x01B4033DA0bE512f7629Ec54B9e97E6fDFE8A0aD"
+  }
+}

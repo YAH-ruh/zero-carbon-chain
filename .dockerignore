@@ -1,0 +1,14 @@
+# Docker 构建上下文排除（后端镜像只需要 Go 源码）
+.git
+.trae
+frontend/node_modules
+frontend/dist
+contracts/node_modules
+contracts/cache
+contracts/artifacts
+contracts/build-info
+data
+.env
+*.log
+-w
+backend.exe

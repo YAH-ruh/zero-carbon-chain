@@ -377,7 +377,7 @@ const creditStatusItems = computed(() => {
   credits.value.forEach(c => { q[c.status] = (q[c.status] || 0) + (Number(c.carbon_credits) || 0) })
   return [
     { label: '可用', value: Number(q.available.toFixed(1)), color: '#0d9488' },
-    { label: '锁定(挂单中)', value: Number(q.locked.toFixed(1)), color: '#3b82f6' },
+    { label: '锁定(挂单中)', value: Number(q.locked.toFixed(1)), color: '#0d9488' },
     { label: '已售出', value: Number(q.sold.toFixed(1)), color: '#f59e0b' }
   ]
 })
@@ -556,7 +556,7 @@ function formatTime(t) { return t ? new Date(t).toLocaleString() : '-' }
   margin-bottom: 10px;
 }
 .dash-info { margin-bottom: 8px; }
-.dash-val { display: block; font-size: 24px; font-weight: 700; color: #1e293b; }
+.dash-val { display: block; font-size: 24px; font-weight: 700; color: #14532d; }
 .dash-label { display: block; font-size: 12px; color: #94a3b8; margin-top: 2px; }
 .dash-bar {
   height: 6px;

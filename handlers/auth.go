@@ -84,7 +84,9 @@ func Login(c *gin.Context) {
 	}
 
 	var user models.User
-	if err := database.DB.Where("username = ?", req.Username).First(&user).Error; err != nil {
+	// 支持账号或企业名称登录(企业名称已规范为全称，如 绿恒节能科技有限公司)
+	if err := database.DB.Where("username = ? OR (role = ? AND company = ?)",
+		req.Username, models.RoleEnterprise, req.Username).First(&user).Error; err != nil {
 		response.Unauthorized(c, "用户名或密码错误")
 		return
 	}

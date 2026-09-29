@@ -1,81 +1,107 @@
-// utils/mockChartData.js
-// 内置"模拟测试数据集"：供四个角色首页在空数据/演示场景下预览 ECharts 图表效果。
-// 与业务数据严格隔离：本文件仅用于"图表 series 预览"，顶部统计卡片的数字仍来自
-// 后端真实接口，二者数据源相互独立，绝不参与能耗录入/积分核算/撮合等业务数据流。
-export const MOCK = {
-  // 小微企业首页
-  enterprise: {
-    trend: { // 企业碳积分趋势(累计)
-      labels: ['06/01', '06/03', '06/05', '06/08', '06/10', '06/13', '06/16', '06/20'],
-      values: [180, 320, 460, 620, 780, 960, 1120, 1380]
-    },
-    usage: { // 历史能耗构成(电/天然气/水)
-      labels: ['用电', '天然气', '用水'],
-      values: [38400, 2650, 780]
-    },
-    status: { // 碳积分状态分布
-      data: [
-        { name: '可用', value: 860 },
-        { name: '锁定(挂单中)', value: 220 },
-        { name: '已售出', value: 150 }
-      ]
-    }
-  },
+/**
+ * utils/mockChartData.js
+ * 仪表盘图表用的 Mock 数据（后续替换为真实 API）
+ */
 
-  // 园区管理员首页
-  park: {
-    emission: { // 辖区企业能耗排放汇总
-      labels: ['小微企业001', '鑫盛电子厂', '精工机械厂', '绿源新材料', '恒润纺织'],
-      values: [12000, 18600, 14200, 9800, 16800]
-    },
-    credits: { // 企业碳积分分布
-      data: [
-        { name: '小微企业001', value: 1380 },
-        { name: '鑫盛电子厂', value: 2050 },
-        { name: '精工机械厂', value: 1560 },
-        { name: '绿源新材料', value: 1080 },
-        { name: '恒润纺织', value: 1890 }
-      ]
-    }
-  },
+/* 近 12 个月标签 */
+const MONTHS = (() => {
+  const arr = []
+  const now = new Date()
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1)
+    arr.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`)
+  }
+  return arr
+})()
 
-  // 碳交易所首页
-  exchange: {
-    trend: { // 碳积分成交趋势
-      labels: ['06/01', '06/03', '06/05', '06/08', '06/10', '06/13', '06/16', '06/20'],
-      values: [220, 340, 280, 560, 430, 720, 610, 890]
-    },
-    orderRank: { // 挂单数据概览(待成交量排行)
-      labels: ['挂单-018', '挂单-015', '挂单-011', '挂单-009', '挂单-006', '挂单-003'],
-      values: [500, 420, 360, 300, 260, 200]
-    },
-    seller: { // 成交方成交分布
-      data: [
-        { name: '小微企业001', value: 1450 },
-        { name: '鑫盛电子厂', value: 1080 },
-        { name: '绿源新材料', value: 860 },
-        { name: '恒润纺织', value: 720 },
-        { name: '精工机械厂', value: 560 }
-      ]
-    }
-  },
+/* 近 30 天标签 */
+const DAYS = (() => {
+  const arr = []
+  const now = new Date()
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i)
+    arr.push(`${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`)
+  }
+  return arr
+})()
 
-  // 监管核查首页
-  regulator: {
-    trend: { // 上链存证趋势(按日新增区块)
-      labels: ['06/01', '06/03', '06/05', '06/08', '06/10', '06/13', '06/16', '06/20'],
-      values: [6, 12, 9, 18, 15, 26, 21, 30]
-    },
-    types: { // 上链存证类型统计
-      labels: ['能耗数据', '碳积分', '交易', 'AI报告', '操作日志'],
-      values: [42, 36, 28, 12, 54]
-    },
-    flow: { // 平台碳积分流通分布
-      data: [
-        { name: '可用', value: 4200 },
-        { name: '锁定(挂单中)', value: 860 },
-        { name: '已交易', value: 1500 }
-      ]
-    }
+const rand = (min, max) => Math.round(Math.random() * (max - min) + min)
+
+/* 生成近 12 个月能耗/积分趋势 */
+export function genMonthlyTrend(baseEmission = 800, volatility = 0.3) {
+  const labels = MONTHS
+  const emission = labels.map(() => Math.round(baseEmission * (1 + (Math.random() - 0.5) * volatility)))
+  const credits = emission.map(v => Math.round(v * 0.25 * (0.8 + Math.random() * 0.4)))
+  return { labels, emission, credits }
+}
+
+/* 生成近 30 天日趋势 */
+export function genDailyTrend(base = 40, volatility = 0.4) {
+  const labels = DAYS
+  const values = labels.map(() => Math.round(base * (1 + (Math.random() - 0.5) * volatility)))
+  return { labels, values }
+}
+
+/* 碳积分分布（环形图数据） */
+export function genCreditDistribution() {
+  return [
+    { name: '已挂单',   value: rand(200, 500) },
+    { name: '已成交',   value: rand(300, 800) },
+    { name: '可用余额', value: rand(100, 400) },
+    { name: '质押中',   value: rand(50, 200) },
+    { name: '已过期',   value: rand(10, 50) },
+  ]
+}
+
+/* 交易类型构成 */
+export function genTradeComposition() {
+  return [
+    { name: '现货交易',   value: rand(400, 900) },
+    { name: '租赁交易',   value: rand(100, 300) },
+    { name: '远期交易',   value: rand(80, 200) },
+    { name: '质押融资',   value: rand(50, 150) },
+  ]
+}
+
+/* 企业能耗排行柱状图 */
+export function genEnterpriseRanking(count = 8) {
+  // 使用平台真实注册的 5 家园区入驻企业（与数据库企业名录一致）
+  const names = [
+    '绿恒节能科技有限公司',
+    '晨光烘焙食品有限公司',
+    '恒达针织纺织品有限公司',
+    '精工不锈钢制品有限公司',
+    '蓝天包装制品有限公司',
+  ]
+  const labels = names.slice(0, count)
+  const values = labels.map(() => rand(500, 1500))
+  return { labels, values }
+}
+
+/* 园区分布数据（大屏用） */
+export function genParkDistribution() {
+  return [
+    { name: '绿色科技示范园',   emission: rand(2000, 5000), credits: rand(500, 1200), enterprises: rand(8, 20) },
+    { name: '低碳智造产业园',   emission: rand(1500, 4000), credits: rand(400, 1000), enterprises: rand(6, 15) },
+    { name: '新能源工业园区',   emission: rand(1000, 3000), credits: rand(300, 800),  enterprises: rand(5, 12) },
+    { name: '循环经济产业园',   emission: rand(800, 2500),  credits: rand(200, 600),  enterprises: rand(4, 10) },
+  ]
+}
+
+/* 雷达图：企业多维评估 */
+export function genEnterpriseRadar() {
+  return {
+    indicator: [
+      { name: '能耗合规',   max: 100 },
+      { name: '碳积分健康', max: 100 },
+      { name: '链上存证',   max: 100 },
+      { name: 'AI减排指数', max: 100 },
+      { name: 'ZKP隐私性',  max: 100 },
+      { name: '交易活跃度', max: 100 },
+    ],
+    series: [
+      { name: '本企业', value: [rand(70,95), rand(60,90), rand(80,100), rand(50,85), rand(75,95), rand(40,80)] },
+      { name: '园区均值', value: [rand(55,75), rand(50,70), rand(60,80), rand(40,65), rand(60,80), rand(35,65)] },
+    ]
   }
 }

@@ -4,6 +4,7 @@ package handlers
 // 变更说明(v2)：核算/挂单等写操作与链上存证同一事务提交；企业角色数据越权拦截强化。
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -52,23 +53,7 @@ func CalculateAndUpload(c *gin.Context) {
 
 	// 事务：积分入库 + 上链 + 状态回写 + 审计
 	err := database.DB.Transaction(func(tx *gorm.DB) error {
-		if err := tx.Create(credit).Error; err != nil {
-			return fmt.Errorf("核算记录保存失败: %w", err)
-		}
-		block, err := blockchain.AddBlockTx(tx, models.DataTypeCredit, credit.CreditNo, credit)
-		if err != nil {
-			return err
-		}
-		credit.BlockHash = block.BlockHash
-		credit.OnChain = true
-		if err := tx.Model(credit).Updates(map[string]interface{}{
-			"block_hash": block.BlockHash,
-			"on_chain":   true,
-		}).Error; err != nil {
-			return err
-		}
-		return logOperation(tx, c, models.OpCreditCalculate, models.DataTypeCredit, credit.CreditNo, block.BlockHash,
-			fmt.Sprintf("碳积分核算: 排放%.2fkgCO2 积分%.2f", credit.TotalEmission, credit.CarbonCredits))
+		return genCarbonCreditInTx(tx, c, &energyRecord, credit)
 	})
 	if err != nil {
 		logger.Error("碳积分核算失败: %v", err)
@@ -80,6 +65,28 @@ func CalculateAndUpload(c *gin.Context) {
 		"credit":     credit,
 		"block_hash": credit.BlockHash,
 	})
+}
+
+// genCarbonCreditInTx 在事务内生成碳积分凭证并上链存证(供"能耗上报自动核算"与"手动核算"共用)。
+// 步骤：凭证入库 → AddBlockTx 上链 → 上链状态回写 → 操作审计。
+func genCarbonCreditInTx(tx *gorm.DB, c *gin.Context, energyRecord *models.EnergyRecord, credit *models.CarbonCredit) error {
+	if err := tx.Create(credit).Error; err != nil {
+		return fmt.Errorf("核算记录保存失败: %w", err)
+	}
+	block, err := blockchain.AddBlockTx(tx, models.DataTypeCredit, credit.CreditNo, credit)
+	if err != nil {
+		return err
+	}
+	credit.BlockHash = block.BlockHash
+	credit.OnChain = true
+	if err := tx.Model(credit).Updates(map[string]interface{}{
+		"block_hash": block.BlockHash,
+		"on_chain":   true,
+	}).Error; err != nil {
+		return err
+	}
+	return logOperation(tx, c, models.OpCreditCalculate, models.DataTypeCredit, credit.CreditNo, block.BlockHash,
+		fmt.Sprintf("碳积分核算: 排放%.2fkgCO2 积分%.2f", credit.TotalEmission, credit.CarbonCredits))
 }
 
 // ListMyCredits 查看碳积分列表
@@ -117,16 +124,13 @@ func ListMyCredits(c *gin.Context) {
 	})
 }
 
-// GetCarbonStats 获取企业碳数据统计
+// GetCarbonStats 获取企业碳数据统计(实时)
 // GET /api/carbon/stats?enterprise_id=1
+// 企业角色强制本企业口径；其余角色(监管/交易所/园管)不带 enterprise_id 时返回全平台统计。
 func GetCarbonStats(c *gin.Context) {
 	entID := parseUint(c.Query("enterprise_id"))
 	if isEnterpriseOperator(c) {
 		entID = currentUserID(c)
-	}
-	if entID == 0 {
-		response.BadRequest(c, "缺少企业ID(enterprise_id)")
-		return
 	}
 	response.OK(c, services.GetEnterpriseCarbonStats(entID))
 }
@@ -163,7 +167,7 @@ func CreateSellOrder(c *gin.Context) {
 		return
 	}
 
-	orderNo := fmt.Sprintf("SELL-%s-%04d", time.Now().Format("20060102"), credit.ID)
+	orderNo := fmt.Sprintf("SELL-%s-%d", time.Now().Format("20060102"), time.Now().UnixNano())
 	sellOrder := &models.SellOrder{
 		OrderNo:      orderNo,
 		EnterpriseID: credit.OwnerID,
@@ -200,6 +204,62 @@ func CreateSellOrder(c *gin.Context) {
 	response.OKMsg(c, "挂单创建成功，碳积分已锁定", sellOrder)
 }
 
+// CancelSellOrder 撤销挂单(业务联动锁定规则：撤销后解除积分冻结，可用余额恢复)
+// POST /api/carbon/sell-orders/cancel  body: {credit_id}
+// 数据越权：仅能撤销本企业挂单；事务：挂单 pending→cancelled + 凭证 locked→available。
+func CancelSellOrder(c *gin.Context) {
+	var req struct {
+		CreditID uint `json:"credit_id" binding:"required"`
+	}
+	if !response.BindJSON(c, &req) {
+		return
+	}
+
+	// 只允许撤销该凭证下仍处于挂单中的记录(凭证整条锁定，pending 挂单至多一笔)
+	// 数据越权：企业仅能撤销本企业挂单；交易所/监管拥有全交易权限(含删除挂单)可撤销任意挂单
+	query := database.DB.Where("credit_id = ? AND status = ?", req.CreditID, "pending")
+	if isEnterpriseOperator(c) {
+		query = query.Where("enterprise_id = ?", currentUserID(c))
+	}
+	var order models.SellOrder
+	err := query.Order("id desc").First(&order).Error
+	if err != nil {
+		response.NotFound(c, "未找到该凭证的挂单记录，或挂单已处理")
+		return
+	}
+
+	err = database.DB.Transaction(func(tx *gorm.DB) error {
+		// 挂单状态条件更新(仅 pending 可撤销，防并发重复撤销/已成交后撤销)
+		res := tx.Model(&models.SellOrder{}).
+			Where("id = ? AND status = ?", order.ID, "pending").
+			Update("status", "cancelled")
+		if res.Error != nil {
+			return res.Error
+		}
+		if res.RowsAffected == 0 {
+			return errors.New("挂单状态已变化，无法撤销")
+		}
+		// 解除积分冻结：凭证 locked → available(挂单未成交，资产归属不变)
+		res2 := tx.Model(&models.CarbonCredit{}).
+			Where("id = ? AND status = ?", req.CreditID, "locked").
+			Update("status", "available")
+		if res2.Error != nil {
+			return res2.Error
+		}
+		if res2.RowsAffected == 0 {
+			return errors.New("碳积分状态已变化，无法解除冻结")
+		}
+		return logOperation(tx, c, models.OpSellOrderCancel, "sell_order", order.OrderNo,
+			"", fmt.Sprintf("撤销挂单: %.2f积分 解除冻结", order.Quantity))
+	})
+	if err != nil {
+		logger.Error("撤销挂单失败: %v", err)
+		response.ServerError(c, "撤销挂单失败: "+err.Error())
+		return
+	}
+	response.OKMsg(c, "挂单已撤销，碳积分冻结已解除", gin.H{"order_no": order.OrderNo})
+}
+
 // ListSellOrders 查看挂单列表
 // GET /api/carbon/sell-orders?status=pending&page=1&page_size=20
 // 数据权限：企业角色仅返回本企业挂单，其余角色可查看全部。
@@ -229,8 +289,38 @@ func ListSellOrders(c *gin.Context) {
 		return
 	}
 
+	// 批量补充挂单关联的碳积分凭证编号
+	creditIDs := make([]uint, 0, len(orders))
+	seen := map[uint]bool{}
+	for _, o := range orders {
+		if o.CreditID > 0 && !seen[o.CreditID] {
+			creditIDs = append(creditIDs, o.CreditID)
+			seen[o.CreditID] = true
+		}
+	}
+	creditNoMap := map[uint]string{}
+	if len(creditIDs) > 0 {
+		var credits []models.CarbonCredit
+		if err := database.DB.Select("id", "credit_no").Where("id IN ?", creditIDs).Find(&credits).Error; err == nil {
+			for _, cr := range credits {
+				creditNoMap[cr.ID] = cr.CreditNo
+			}
+		}
+	}
+	list := make([]gin.H, 0, len(orders))
+	for _, o := range orders {
+		list = append(list, gin.H{
+			"id": o.ID, "order_no": o.OrderNo, "enterprise_id": o.EnterpriseID,
+			"credit_id": o.CreditID, "credit_no": creditNoMap[o.CreditID],
+			"quantity": o.Quantity, "unit_price": o.UnitPrice, "total_amount": o.TotalAmount,
+			"status": o.Status, "buyer_id": o.BuyerID, "block_hash": o.BlockHash,
+			"on_chain": o.OnChain, "created_at": o.CreatedAt, "updated_at": o.UpdatedAt,
+			"enterprise": o.Enterprise,
+		})
+	}
+
 	response.OK(c, gin.H{
-		"list":     orders,
+		"list":     list,
 		"total":    total,
 		"page":     page,
 		"pageSize": pageSize,

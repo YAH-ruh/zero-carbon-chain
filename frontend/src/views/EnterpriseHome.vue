@@ -7,7 +7,7 @@
         <div class="hero-left">
           <span class="hero-icon"><OfficeBuilding /></span>
           <div>
-            <h1>小微企业碳数据工作台</h1>
+            <h1>小微企业工作台</h1>
             <p>手动能耗上报 → SHA-256 碳积分核算 → 挂单交易流转，企业侧碳资产管理闭环</p>
           </div>
         </div>

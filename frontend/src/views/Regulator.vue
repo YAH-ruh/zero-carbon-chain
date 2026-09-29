@@ -303,12 +303,12 @@ const blockTypeItems = computed(() => {
 // 平台碳积分流通分布(可用/锁定/已交易 三态之和 = 已发行)
 const creditFlowItems = computed(() => [
   { label: '可用', value: Number((stats.value.total_available_credits || 0).toFixed(1)), color: '#0d9488' },
-  { label: '锁定(挂单中)', value: Number((stats.value.total_locked_credits || 0).toFixed(1)), color: '#3b82f6' },
+  { label: '锁定(挂单中)', value: Number((stats.value.total_locked_credits || 0).toFixed(1)), color: '#0d9488' },
   { label: '已交易', value: Number((stats.value.total_traded_credits || 0).toFixed(1)), color: '#f59e0b' }
 ])
 // 数据校验/风险告警结果汇总：按级别统计
 const levelLabels = { success: '正常', info: '提示', warning: '警告', error: '异常' }
-const levelColors = { success: '#10b981', info: '#3b82f6', warning: '#f59e0b', error: '#ef4444' }
+const levelColors = { success: '#10b981', info: '#0d9488', warning: '#f59e0b', error: '#ef4444' }
 const levelOrder = ['success', 'info', 'warning', 'error']
 const alertLevelItems = computed(() => {
   const map = new Map()
@@ -375,7 +375,7 @@ function formatTime(t) {
 .dash-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
 .dash-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px; }
 .dash-info { margin-bottom: 8px; }
-.dash-val { display: block; font-size: 24px; font-weight: 700; color: #1e293b; }
+.dash-val { display: block; font-size: 24px; font-weight: 700; color: #14532d; }
 .dash-label { display: block; font-size: 12px; color: #94a3b8; margin-top: 2px; }
 .dash-bar { height: 6px; background: #f1f5f9; border-radius: 3px; overflow: hidden; }
 .dash-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }

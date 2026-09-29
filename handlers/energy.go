@@ -14,6 +14,7 @@ import (
 	"blockchain-demo/models"
 	"blockchain-demo/pkg/logger"
 	"blockchain-demo/pkg/response"
+	"blockchain-demo/services"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -69,13 +70,17 @@ func CreateEnergyRecord(c *gin.Context) {
 		Gas:          req.Gas,
 		Water:        req.Water,
 		CollectTime:  time.Now(),
+		Status:       models.EnergyStatusPending, // 先落账为「待核算」，核算完成后置为「核算完成」
 	}
 
-	// 事务：能耗入库 + 真实SHA-256上链 + 业务上链状态回写 + 操作审计
+	// 能耗上报 → 保存能耗记录 → 自动核算生成碳凭证(同一事务，保证链路原子一致)
+	var credit *models.CarbonCredit
 	err := database.DB.Transaction(func(tx *gorm.DB) error {
+		// 1. 能耗记录入库
 		if err := tx.Create(record).Error; err != nil {
 			return fmt.Errorf("能耗记录保存失败: %w", err)
 		}
+		// 2. 能耗记录上链
 		block, err := blockchain.AddBlockTx(tx, models.DataTypeEnergy, record.RecordNo, record)
 		if err != nil {
 			return err
@@ -88,8 +93,18 @@ func CreateEnergyRecord(c *gin.Context) {
 		}).Error; err != nil {
 			return err
 		}
+		// 3. 依据能耗数据核算碳积分凭证并上链(计入企业累计核算积分)
+		credit = services.CalculateCarbonCredits(record)
+		if err := genCarbonCreditInTx(tx, c, record, credit); err != nil {
+			return err
+		}
+		// 4. 反馈核算完成状态
+		if err := tx.Model(record).Update("status", models.EnergyStatusCalculated).Error; err != nil {
+			return err
+		}
+		// 5. 审计
 		return logOperation(tx, c, models.OpEnergyCreate, models.DataTypeEnergy, record.RecordNo, block.BlockHash,
-			fmt.Sprintf("能耗上报: 电%.1fkWh 气%.1fm³ 水%.1ft", record.Electricity, record.Gas, record.Water))
+			fmt.Sprintf("能耗上报并自动核算: 电%.1fkWh 气%.1fm³ 水%.1ft → 碳积分%.2f", record.Electricity, record.Gas, record.Water, credit.CarbonCredits))
 	})
 	if err != nil {
 		logger.Error("能耗上报失败: %v", err)
@@ -97,7 +112,12 @@ func CreateEnergyRecord(c *gin.Context) {
 		return
 	}
 
-	response.OKMsg(c, "能耗数据提交成功，已计算SHA-256并上链存证", record)
+	response.OKMsg(c, "能耗上报成功，碳积分已自动核算入账并上链", gin.H{
+		"record":     record,
+		"credit_no":  credit.CreditNo,
+		"credits":    credit.CarbonCredits,
+		"block_hash": credit.BlockHash,
+	})
 }
 
 // ListEnergyRecords 查询能耗记录列表

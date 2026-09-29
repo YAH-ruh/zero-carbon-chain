@@ -1,80 +1,113 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
+import LayoutShell from '../components/layout/LayoutShell.vue'
+// 采用 hash 路由：GitHub Pages 为静态托管，history 模式刷新子路径会 404；
+// hash 模式(#/xxx)全程走 index.html，线上部署零配置可用。
 
-// 公共页(无需登录)
-const Home = () => import('../views/Home.vue')
-const Login = () => import('../views/Login.vue')
-const Register = () => import('../views/Register.vue')
+/* ====== 公共页（不进 LayoutShell） ====== */
+const Home      = () => import('../views/Home.vue')
+const Login     = () => import('../views/Login.vue')
+const Register  = () => import('../views/Register.vue')
 
-// 四角色独立首页面板(各自统计指标/图表/业务模块完全独立)
-const EnterpriseHome = () => import('../views/EnterpriseHome.vue')
-const ParkAdminHome = () => import('../views/ParkAdminHome.vue')
-const ExchangeHome = () => import('../views/ExchangeHome.vue')
-const RegulatorHome = () => import('../views/RegulatorHome.vue')
+/* ====== 业务页（进 LayoutShell，扁平化路由） ====== */
+const Dashboard     = () => import('../views/dashboard.vue')
+const DataV         = () => import('../views/datav.vue')
+const EnergyReport  = () => import('../views/energy-report.vue')
+const IoTDevices    = () => import('../views/iot-devices.vue')
+const ZkpProof      = () => import('../views/zkp-proof.vue')
+const CreditsCenter = () => import('../views/credits-center.vue')
+const Exchange      = () => import('../views/exchange.vue')
+const Pledge        = () => import('../views/pledge.vue')
+const Archive       = () => import('../views/archive.vue')
+const Footprint     = () => import('../views/footprint.vue')
+const AiAgent       = () => import('../views/ai-agent.vue')
+const Arbitration   = () => import('../views/arbitration.vue')
+const RollupVerify  = () => import('../views/rollup-verify.vue')
+const Incentive     = () => import('../views/incentive.vue')
+const Permission    = () => import('../views/permission.vue')
 
-// 四角色业务功能页(作为各角色首页下的"子功能子路由"，内部按钮跳转进入)
-const Enterprise = () => import('../views/Enterprise.vue')
-const ParkAdmin = () => import('../views/ParkAdmin.vue')
-const Exchange = () => import('../views/Exchange.vue')
-const Regulator = () => import('../views/Regulator.vue')
-
-// 各角色合法子功能标识(进入不存在的子路由则回退到该角色首页)
-const ROLE_FEATURES = {
-  enterprise: ['energy', 'credits', 'sell', 'chain', 'advice'],
-  park_admin: ['enterprises', 'report'],
-  exchange: ['orders', 'match', 'verify', 'history'],
-  regulator: ['chain', 'verify', 'alert', 'users']
+/* 菜单权限矩阵：key -> 允许访问的角色数组 */
+const ROLE_MENU = {
+  'dashboard':      ['enterprise','park_admin','exchange','regulator'],
+  'datav':          ['park_admin','regulator'],
+  'energy-report':  ['enterprise'],
+  'iot-devices':    ['enterprise'],
+  'zkp-proof':      ['enterprise','regulator'],
+  'credits-center': ['enterprise','park_admin','exchange','regulator'],
+  'exchange':       ['exchange'],
+  'pledge':         ['enterprise'],
+  'archive':        ['exchange','regulator'],
+  'footprint':      ['enterprise'],
+  'ai-agent':       ['exchange','regulator'],
+  'arbitration':    ['enterprise','exchange','regulator'],
+  'rollup-verify':  ['regulator'],
+  'incentive':      ['exchange','park_admin'],
+  'permission':     ['regulator'],
 }
+
+/* 业务子路由表（扁平化，不嵌套角色前缀） */
+const bizChildren = [
+  { path: 'dashboard',      name: 'Dashboard',      component: Dashboard     },
+  { path: 'datav',          name: 'DataV',          component: DataV,          meta: { fullscreen: true } },
+  { path: 'energy-report',  name: 'EnergyReport',   component: EnergyReport  },
+  { path: 'iot-devices',    name: 'IoTDevices',     component: IoTDevices    },
+  { path: 'zkp-proof',      name: 'ZkpProof',       component: ZkpProof      },
+  { path: 'credits-center', name: 'CreditsCenter',  component: CreditsCenter },
+  { path: 'exchange',       name: 'ExchangePage',   component: Exchange      },
+  { path: 'pledge',         name: 'Pledge',         component: Pledge        },
+  { path: 'archive',        name: 'Archive',        component: Archive       },
+  { path: 'footprint',      name: 'Footprint',      component: Footprint     },
+  { path: 'ai-agent',       name: 'AiAgent',        component: AiAgent       },
+  { path: 'arbitration',    name: 'Arbitration',    component: Arbitration   },
+  { path: 'rollup-verify',  name: 'RollupVerify',   component: RollupVerify  },
+  { path: 'incentive',      name: 'Incentive',      component: Incentive     },
+  { path: 'permission',     name: 'Permission',     component: Permission    },
+]
 
 const routes = [
   { path: '/', name: 'Home', component: Home, meta: { noAuth: true } },
   { path: '/login', name: 'Login', component: Login, meta: { noAuth: true } },
   { path: '/register', name: 'Register', component: Register, meta: { noAuth: true } },
 
-  // ============ 小微企业 ============
-  { path: '/enterprise', name: 'EnterpriseHome', component: EnterpriseHome, meta: { role: 'enterprise' } },
-  { path: '/enterprise/:feature', name: 'EnterpriseFeature', component: Enterprise, meta: { role: 'enterprise' } },
+  {
+    path: '/',
+    component: LayoutShell,
+    children: [
+      ...bizChildren,
+      // 默认跳仪表盘
+      { path: '', redirect: '/dashboard' }
+    ]
+  },
 
-  // ============ 园区管理员 ============
-  { path: '/park-admin', name: 'ParkAdminHome', component: ParkAdminHome, meta: { role: 'park_admin' } },
-  { path: '/park-admin/:feature', name: 'ParkAdminFeature', component: ParkAdmin, meta: { role: 'park_admin' } },
-
-  // ============ 碳交易所 ============
-  { path: '/exchange', name: 'ExchangeHome', component: ExchangeHome, meta: { role: 'exchange' } },
-  { path: '/exchange/:feature', name: 'ExchangeFeature', component: Exchange, meta: { role: 'exchange' } },
-
-  // ============ 监管核查 ============
-  { path: '/regulator', name: 'RegulatorHome', component: RegulatorHome, meta: { role: 'regulator' } },
-  { path: '/regulator/:feature', name: 'RegulatorFeature', component: Regulator, meta: { role: 'regulator' } }
+  // 兜底：跳到仪表盘
+  { path: '/:pathMatch(.*)*', redirect: '/dashboard' }
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
   scrollBehavior: () => ({ top: 0 })
 })
 
-// 路由守卫：登录状态 / 角色权限 / 子功能合法性
+/* 路由守卫：登录状态 + 角色权限 */
 router.beforeEach((to, from, next) => {
   const token = localStorage.getItem('token')
   const userStr = localStorage.getItem('user')
 
   if (to.meta.noAuth) {
-    if (token && to.path === '/login') return next(getDefaultRoute(userStr))
+    if (token && to.path === '/login') return next('/dashboard')
     return next()
   }
   if (!token) return next('/login')
 
-  if (to.meta.role) {
+  // 业务页角色权限校验
+  const pathKey = to.path.replace(/^\//, '')
+  const allowed = ROLE_MENU[pathKey]
+  if (allowed) {
     try {
       const user = JSON.parse(userStr || '{}')
-      // 角色不匹配：回到当前用户角色首页(而非放行，避免越权页面)
-      if (user.role !== to.meta.role) return next(getDefaultRoute(userStr))
-      // 子功能标识校验：未收录时回退该角色首页
-      if (to.params.feature) {
-        const allowed = ROLE_FEATURES[user.role] || []
-        if (!allowed.includes(to.params.feature)) {
-          return next({ path: getDefaultRoute(userStr), query: to.query })
-        }
+      if (!allowed.includes(user.role)) {
+        // 无权限：回到仪表盘（LayoutShell 会按 user.role 渲染对应菜单）
+        return next('/dashboard')
       }
     } catch {
       return next('/login')
@@ -83,20 +116,5 @@ router.beforeEach((to, from, next) => {
 
   next()
 })
-
-function getDefaultRoute(userStr) {
-  try {
-    const user = JSON.parse(userStr || '{}')
-    const roleMap = {
-      enterprise: '/enterprise',
-      park_admin: '/park-admin',
-      exchange: '/exchange',
-      regulator: '/regulator'
-    }
-    return roleMap[user.role] || '/login'
-  } catch {
-    return '/login'
-  }
-}
 
 export default router

@@ -26,6 +26,11 @@ const (
 	SourceFallback = "fallback" // 内容为容错降级模板(未配置Key或调用失败)
 )
 
+// ChatSystemPrompt 聊天助手固定 system 角色提示
+const ChatSystemPrompt = `你是零碳微证平台AI碳减排助手，熟悉小微企业碳排放、碳积分、ZKP隐私核算、碳足迹相关知识。
+能够针对不同行业给出小微企业适用的简易碳排放策略方案。回答简洁，贴合隐私核算、区块链存证场景。
+仅回答碳减排相关问题，无关问题请告知用户你只提供碳减排咨询。`
+
 // DeepSeekMessage DeepSeek API消息结构
 type DeepSeekMessage struct {
 	Role    string `json:"role"`
@@ -40,10 +45,17 @@ type DeepSeekRequest struct {
 	MaxTokens   int               `json:"max_tokens"`
 }
 
+// DeepSeekRespMessage DeepSeek API响应消息结构（含独立思考思维链字段）
+type DeepSeekRespMessage struct {
+	Role             string `json:"role"`
+	Content          string `json:"content"`
+	ReasoningContent string `json:"reasoning_content"` // 模型思维链（独立思考过程）
+}
+
 // DeepSeekResponse DeepSeek API响应结构
 type DeepSeekResponse struct {
 	Choices []struct {
-		Message DeepSeekMessage `json:"message"`
+		Message DeepSeekRespMessage `json:"message"`
 	} `json:"choices"`
 	Error *struct {
 		Message string `json:"message"`
@@ -121,6 +133,129 @@ func callDeepSeekAPI(systemPrompt, userPrompt string) (string, error) {
 func osIsTimeout(err error) bool {
 	ne, ok := err.(interface{ Timeout() bool })
 	return ok && ne.Timeout()
+}
+
+// callDeepSeekChat 调用 DeepSeek API（多轮对话版本）
+// 与 callDeepSeekAPI 的区别：直接接受完整 messages 数组（含 system/user/assistant 历史），
+// 不再由上层强制拼 system + user 两轮。
+// 返回：content（最终回答）、reasoning（模型独立思考思维链，可能为空）、error
+func callDeepSeekChat(messages []DeepSeekMessage) (string, string, error) {
+	cfg := config.AppConfig
+
+	if cfg.DeepSeekAPIKey == "" || cfg.DeepSeekAPIKey == "your_deepseek_api_key_here" {
+		return "", "", fmt.Errorf("未配置 DEEPSEEK_API_KEY")
+	}
+
+	reqBody := DeepSeekRequest{
+		Model:       cfg.DeepSeekModel,
+		Messages:    messages,
+		Temperature: 0.7,
+		MaxTokens:   1024,
+	}
+
+	jsonData, err := json.Marshal(reqBody)
+	if err != nil {
+		return "", "", fmt.Errorf("序列化请求失败: %w", err)
+	}
+
+	client := &http.Client{Timeout: cfg.AITimeout()}
+	req, err := http.NewRequest("POST", cfg.DeepSeekAPIURL, bytes.NewBuffer(jsonData))
+	if err != nil {
+		return "", "", fmt.Errorf("创建请求失败: %w", err)
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+cfg.DeepSeekAPIKey)
+
+	resp, err := client.Do(req)
+	if err != nil {
+		if osIsTimeout(err) {
+			return "", "", fmt.Errorf("AI服务响应超时(>%.0fs): %v", cfg.AITimeout().Seconds(), err)
+		}
+		return "", "", fmt.Errorf("调用AI服务失败: %v", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", "", fmt.Errorf("读取响应失败: %w", err)
+	}
+
+	var result DeepSeekResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		return "", "", fmt.Errorf("解析响应失败: %w (body=%s)", err, string(body))
+	}
+
+	if result.Error != nil {
+		return "", "", fmt.Errorf("AI服务错误: %s", result.Error.Message)
+	}
+
+	if len(result.Choices) > 0 {
+		raw := strings.TrimSpace(result.Choices[0].Message.Content)
+		reasoning := strings.TrimSpace(result.Choices[0].Message.ReasoningContent)
+		// 兼容部分模型把思维链以 <think>...</think> 内联在 content 中的形态
+		content, inlineThink := stripThinkBlock(raw)
+		if reasoning == "" {
+			reasoning = inlineThink
+		}
+		if content != "" {
+			return content, reasoning, nil
+		}
+	}
+	return "", "", fmt.Errorf("AI服务返回内容为空")
+}
+
+// stripThinkBlock 从 content 中剥离 <think>...</think> 思维链块
+// 返回：纯回答内容、剥离出的思考文本
+func stripThinkBlock(raw string) (content, think string) {
+	open := strings.Index(raw, "<think>")
+	if open < 0 {
+		return raw, ""
+	}
+	closeIdx := strings.Index(raw, "</think>")
+	if closeIdx < 0 {
+		// 未闭合：视为整段都是思考
+		return strings.TrimSpace(raw[:open]), strings.TrimSpace(raw[open+len("<think>"):])
+	}
+	think = strings.TrimSpace(raw[open+len("<think>") : closeIdx])
+	content = strings.TrimSpace(raw[:open] + raw[closeIdx+len("</think>"):])
+	return content, think
+}
+
+// Chat 多轮对话入口
+// 参数：前端传来的 messages（可为空或只有历史对话，不含 system 角色——此处强制前置）
+// 返回：content(最终回答), reasoning(独立思考思维链), source(ai/error), warn
+// 只走真实 API 模式：成功返回 source=ai，失败返回 source=error + 错误信息在 content 中。
+func Chat(userMessages []DeepSeekMessage) (content, reasoning, source, warn string) {
+	// 过滤非法角色 + 最多保留最近 10 条 user/assistant 对（控制 token 消耗）
+	trimmed := make([]DeepSeekMessage, 0, len(userMessages))
+	for _, m := range userMessages {
+		switch m.Role {
+		case "user", "assistant":
+			if strings.TrimSpace(m.Content) != "" {
+				trimmed = append(trimmed, m)
+			}
+		}
+	}
+	// 只保留最近 10 条
+	if len(trimmed) > 10 {
+		trimmed = trimmed[len(trimmed)-10:]
+	}
+
+	// 组装：前置固定 system 角色
+	fullMessages := append([]DeepSeekMessage{
+		{Role: "system", Content: ChatSystemPrompt},
+	}, trimmed...)
+
+	text, reasoning, err := callDeepSeekChat(fullMessages)
+	if err == nil {
+		logger.Info("AI 多轮对话成功 turns=%d reasoning_len=%d", len(trimmed), len(reasoning))
+		return text, reasoning, SourceAI, ""
+	}
+
+	// 真实 API 失败 → 直接返回 error 类型，由前端提示网络请求失败
+	logger.Error("AI 多轮对话失败: %v", err)
+	return "", "", "error", err.Error()
 }
 
 // GenerateEmissionReductionAdvice 生成企业节能减排优化建议

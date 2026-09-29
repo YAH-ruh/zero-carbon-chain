@@ -1,0 +1,63 @@
+# 零碳微证 · 前端自动部署到 GitHub Pages
+# 触发：main 分支 frontend/** 变更 或 手动触发(workflow_dispatch)
+# 产物：https://<用户名>.github.io/zero-carbon-chain/
+# 首次启用：仓库 Settings → Pages → Build and deployment → Source 选择 "GitHub Actions"
+name: Deploy Frontend to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/deploy-pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: github-pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      # GITHUB_PAGES_REPO 决定 vite base（/zero-carbon-chain/），合约地址已固化在 public/contracts.json
+      - name: Build
+        working-directory: frontend
+        run: npm run build
+        env:
+          GITHUB_PAGES_REPO: zero-carbon-chain
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: frontend/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

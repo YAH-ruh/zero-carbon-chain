@@ -5,15 +5,9 @@
     <div class="login-card">
       <div class="login-header">
         <div class="login-logo">
-          <svg width="44" height="44" viewBox="0 0 44 44" fill="none">
-            <circle cx="22" cy="22" r="22" fill="url(#lg1)" />
-            <path d="M22 10c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12z" fill="rgba(255,255,255,0.2)" />
-            <path d="M22 15c-3.866 0-7 3.134-7 7s3.134 7 7 7 7-3.134 7-7-3.134-7-7-7z" fill="rgba(255,255,255,0.35)" />
-            <path d="M22 19c-1.657 0-3 1.343-3 3s1.343 3 3 3 3-1.343 3-3-1.343-3-3-3z" fill="#fff" />
-            <defs><linearGradient id="lg1" x1="0" y1="0" x2="44" y2="44"><stop offset="0%" stop-color="#0f766e"/><stop offset="100%" stop-color="#10b981"/></linearGradient></defs>
-          </svg>
+          <img src="/favicon.svg" alt="零碳微证标识" width="48" height="48" />
         </div>
-        <h1>微碳链</h1>
+        <h1>零碳微证</h1>
         <p class="login-desc">区块链碳积分可信交易平台 · 小微企业 / 园区管理员 / 碳交易所 / 监管核查</p>
       </div>
 
@@ -35,7 +29,7 @@
 
       <div class="login-footer">
         <p>还没有账号？<a href="/register">前往注册（小微企业）</a></p>
-        <p class="account-hint">预置演示账号：小微企业 / 园区管理员 / 碳交易所 / 监管核查（账号密码均为 123456）</p>
+        <p class="account-hint">预置演示账号：绿恒节能科技有限公司 / 园区管理员 / 碳交易所 / 监管核查（账号密码均为 123456）</p>
       </div>
     </div>
   </div>
@@ -45,15 +39,14 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { authAPI } from '../api/index.js'
+import { ROLE_ROUTES } from '../utils/roleSwitch.js'
 import ParticleBg from '../components/ParticleBg.vue'
 
 const router = useRouter()
 const loading = ref(false)
 const loginError = ref('')
 
-const loginForm = reactive({ username: '小微企业001', password: '123456' })
-
-const roleRoute = { enterprise: '/enterprise', park_admin: '/park-admin', exchange: '/exchange', regulator: '/regulator' }
+const loginForm = reactive({ username: '绿恒节能科技有限公司', password: '123456' })
 
 async function handleLogin() {
   loading.value = true; loginError.value = ''
@@ -61,7 +54,7 @@ async function handleLogin() {
     const res = await authAPI.login(loginForm)
     localStorage.setItem('token', res.data.token)
     localStorage.setItem('user', JSON.stringify(res.data.user))
-    const path = roleRoute[res.data.user.role] || '/login'
+    const path = ROLE_ROUTES[res.data.user.role] || '/dashboard'
     router.push(path)
   } catch (e) {
     loginError.value = e?.msg || '登录失败'
@@ -105,6 +98,7 @@ async function handleLogin() {
   padding: 36px 24px 20px;
 }
 .login-logo { margin-bottom: 12px; }
+.login-logo img { border-radius: 11px; box-shadow: 0 6px 18px rgba(5, 150, 105, 0.28); }
 .login-header h1 {
   margin: 0;
   font-size: 26px;

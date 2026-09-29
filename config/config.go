@@ -54,7 +54,8 @@ func LoadConfig() *Config {
 	}
 
 	app := &Config{
-		ServerPort:      getEnv("SERVER_PORT", "8080"),
+		// Railway/容器平台注入 PORT 环境变量，SERVER_PORT 未设置时回退读取
+		ServerPort:      getEnv("SERVER_PORT", getEnv("PORT", "8080")),
 		DBPath:          getEnv("DB_PATH", "./data/carbon_chain.db"),
 		JWTSecret:       getEnv("JWT_SECRET", "weitanlian_jwt_secret_2024_change_me"),
 		JWTExpireHours:  getEnvInt("JWT_EXPIRE_HOURS", 24),
@@ -89,3 +90,21 @@ func getEnvInt(key string, defaultValue int) int {
 	}
 	return defaultValue
 }
+
+// ============ 智能合约集成配置 ============
+// 默认 ContractMode=mock（本地模拟链），生产/演示可切到 real 对接 Hardhat/Polygon 等
+
+// ContractMode 合约集成模式：mock(default) | real
+func ContractMode() string { return getEnv("CONTRACT_MODE", "mock") }
+
+// ContractRPCURL EVM 节点 RPC 地址（Real 模式必填）
+func ContractRPCURL() string { return getEnv("CONTRACT_RPC_URL", "") }
+
+// ContractTokenAddress CarbonCreditToken 合约地址
+func ContractTokenAddress() string { return getEnv("CONTRACT_TOKEN_ADDRESS", "") }
+
+// ContractTradingAddress CreditTrading 合约地址
+func ContractTradingAddress() string { return getEnv("CONTRACT_TRADING_ADDRESS", "") }
+
+// ContractAttestAddress CarbonAttestation 合约地址
+func ContractAttestAddress() string { return getEnv("CONTRACT_ATTEST_ADDRESS", "") }

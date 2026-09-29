@@ -422,10 +422,45 @@ func (c *SimChain) fetchBusiness(dataType, dataID string) (interface{}, bool) {
 			return v, true
 		}
 	case models.DataTypeReport:
-		var v models.ReportRecord
-		if err := c.db.Where("report_no = ?", dataID).First(&v).Error; err == nil {
-			return v, true
+			var v models.ReportRecord
+			if err := c.db.Where("report_no = ?", dataID).First(&v).Error; err == nil {
+				return v, true
+			}
+		case models.DataTypeIoTRecord:
+			var v models.IoTRecord
+			if err := c.db.Where("record_no = ?", dataID).First(&v).Error; err == nil {
+				return v, true
+			}
+		case models.DataTypePledge:
+			var v models.PledgeOrder
+			if err := c.db.Where("pledge_no = ?", dataID).First(&v).Error; err == nil {
+				return v, true
+			}
+		case models.DataTypeArbitration:
+			var v models.ArbitrationCase
+			if err := c.db.Where("case_no = ?", dataID).First(&v).Error; err == nil {
+				return v, true
+			}
+		case models.DataTypeAgent:
+			var v models.AgentRecord
+			if err := c.db.Where("agent_no = ?", dataID).First(&v).Error; err == nil {
+				return v, true
+			}
+		case models.DataTypeZKProof:
+			var v models.ZKProofRecord
+			if err := c.db.Where("proof_no = ?", dataID).First(&v).Error; err == nil {
+				return v, true
+			}
+		case models.DataTypeArchive:
+			var v models.CarbonArchive
+			if err := c.db.Where("archive_no = ?", dataID).First(&v).Error; err == nil {
+				return v, true
+			}
+		case models.DataTypeCrossChain:
+			var v models.CrossChainReport
+			if err := c.db.Where("report_no = ?", dataID).First(&v).Error; err == nil {
+				return v, true
+			}
 		}
-	}
 	return nil, false
 }

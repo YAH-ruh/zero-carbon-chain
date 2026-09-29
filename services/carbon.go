@@ -43,29 +43,100 @@ func CalculateCarbonCredits(energyRecord *models.EnergyRecord) *models.CarbonCre
 	}
 }
 
-// GetEnterpriseCarbonStats 获取企业碳数据统计
+// GetEnterpriseCarbonStats 获取企业碳数据统计(全部由后端实时聚合计算，前端仅展示)
+// enterpriseID>0 时统计该企业名下(owner_id)持有的积分；enterpriseID=0 时统计全平台。
+// 口径(均来自碳积分表/质押表实时聚合)：
+//   累计核算积分 = 名下全部碳积分凭证总量之和
+//   已售出积分   = status=sold(已撮合成交)
+//   已上链锁定   = status=locked(挂单锁定中，暂不可交易)
+//   质押中积分   = pledge_orders(active)质押金额合计
+//   可用余额     = 累计核算 − 已售出 − 质押中 − 已上链锁定
+//   已上链存证   = on_chain=true 的碳积分数量(另附记录数 on_chain_count 兼容旧字段)
+//   累计排放     = SUM(total_emission)
+//   月度余额/来源构成 = 近12个月累计持有余额与"自主核算/交易受让"构成，供前端图表直接渲染
 func GetEnterpriseCarbonStats(enterpriseID uint) map[string]interface{} {
-	var totalEmission, totalCredits, soldCredits, availableCredits float64
-	var creditCount int64
+	var totalCredits, soldCredits, lockedCredits, onChainCredits, totalEmission float64
+	var selfSource, transferred float64
+	var onChainCount int64
 
-	aggr := databaseOf().Model(&models.CarbonCredit{}).Where("enterprise_id = ?", enterpriseID)
-	aggr.Select("COALESCE(SUM(total_emission), 0)").Scan(&totalEmission)
-	aggr.Select("COALESCE(SUM(carbon_credits), 0)").Scan(&totalCredits)
-	aggr.Count(&creditCount)
-	databaseOf().Model(&models.CarbonCredit{}).
-		Where("enterprise_id = ? AND status = ?", enterpriseID, "sold").
-		Select("COALESCE(SUM(carbon_credits), 0)").Scan(&soldCredits)
-	databaseOf().Model(&models.CarbonCredit{}).
-		Where("enterprise_id = ? AND status = ?", enterpriseID, "available").
-		Select("COALESCE(SUM(carbon_credits), 0)").Scan(&availableCredits)
+	// 一次取回名下全部碳积分凭证，在服务层聚合(数据量小，避免 SQL 方言差异)
+	q := databaseOf().Model(&models.CarbonCredit{}).Select(
+		"enterprise_id", "owner_id", "carbon_credits", "total_emission", "status", "on_chain", "created_at")
+	if enterpriseID > 0 {
+		q = q.Where("owner_id = ?", enterpriseID)
+	}
+	var credits []models.CarbonCredit
+	if err := q.Find(&credits).Error; err != nil {
+		credits = []models.CarbonCredit{}
+	}
+	monthly := make(map[string]float64) // 月份(YYYY-MM) → 当月新增持有积分
+	for _, c := range credits {
+		totalCredits += c.CarbonCredits
+		totalEmission += c.TotalEmission
+		switch c.Status {
+		case "sold":
+			soldCredits += c.CarbonCredits
+		case "locked":
+			lockedCredits += c.CarbonCredits
+		}
+		if c.OnChain {
+			onChainCredits += c.CarbonCredits
+			onChainCount++
+		}
+		if c.EnterpriseID > 0 && c.EnterpriseID == c.OwnerID {
+			selfSource += c.CarbonCredits // 自主核算产生
+		} else {
+			transferred += c.CarbonCredits // 交易受让
+		}
+		monthly[c.CreatedAt.Format("2006-01")] += c.CarbonCredits
+	}
+
+	// 质押中积分：有效质押单(未清算/未逾期)金额合计
+	var pledgedCredits float64
+	pq := databaseOf().Model(&models.PledgeOrder{}).Where("status = ?", "active")
+	if enterpriseID > 0 {
+		pq = pq.Where("enterprise_id = ?", enterpriseID)
+	}
+	pq.Select("COALESCE(SUM(pledge_amount), 0)").Scan(&pledgedCredits)
+
+	// 可用余额 = 累计核算 − 已售出 − 质押中 − 已上链锁定(负数按0兜底)
+	availableCredits := totalCredits - soldCredits - lockedCredits - pledgedCredits
+	if availableCredits < 0 {
+		availableCredits = 0
+	}
+
+	// 近12个月余额变化：截至每月末的累计持有积分(后端计算，前端直接渲染)
+	type MonthPoint struct {
+		Month   string  `json:"month"`
+		Balance float64 `json:"balance"`
+	}
+	now := time.Now()
+	balanceTrend := make([]MonthPoint, 0, 12)
+	for i := 11; i >= 0; i-- {
+		key := now.AddDate(0, -i, 0).Format("2006-01")
+		var cum float64
+		for m, v := range monthly {
+			if m <= key { // YYYY-MM 字典序即时间序
+				cum += v
+			}
+		}
+		balanceTrend = append(balanceTrend, MonthPoint{Month: key, Balance: cum})
+	}
 
 	return map[string]interface{}{
 		"enterprise_id":     enterpriseID,
 		"total_emission":    totalEmission,
 		"total_credits":     totalCredits,
-		"credit_count":      creditCount,
+		"credit_count":      len(credits),
 		"sold_credits":      soldCredits,
+		"locked_credits":    lockedCredits,
+		"pledged_credits":   pledgedCredits,
 		"available_credits": availableCredits,
+		"on_chain_credits":  onChainCredits,
+		"on_chain_count":    onChainCount,
+		"source_self_credits":        selfSource,
+		"source_transferred_credits": transferred,
+		"monthly_balance":            balanceTrend,
 	}
 }
 
@@ -133,7 +204,9 @@ func MatchAndTransfer(tx *gorm.DB, orderID, buyerID uint) (*models.Transaction, 
 		return nil, errors.New("挂单已被处理，请刷新后重试")
 	}
 
-	// 3. 校验并转移碳积分权属(仅锁定中的积分允许成交，杜绝一积分多卖)
+	// 3. 校验并处理碳积分权属(仅锁定中的积分允许成交，杜绝一积分多卖)
+	//    - 现货/远期：权属转移给买方(status: locked → sold)
+	//    - 租赁：仅出租使用权，到期归还卖方，所有权不变 → 成交后积分直接归还卖方可用余额
 	var credit models.CarbonCredit
 	if err := tx.First(&credit, order.CreditID).Error; err != nil {
 		return nil, errors.New("关联碳积分不存在")
@@ -141,9 +214,16 @@ func MatchAndTransfer(tx *gorm.DB, orderID, buyerID uint) (*models.Transaction, 
 	if credit.Status != "locked" {
 		return nil, fmt.Errorf("碳积分状态异常(%s)，无法成交", credit.Status)
 	}
+	creditUpd := map[string]interface{}{}
+	if order.OrderType == "lease" {
+		creditUpd["status"] = "available" // 到期归还规则：使用权租出结束即归还卖方，owner_id 保持不变
+	} else {
+		creditUpd["status"] = "sold"
+		creditUpd["owner_id"] = buyerID
+	}
 	updCredit := tx.Model(&models.CarbonCredit{}).
 		Where("id = ? AND status = ?", credit.ID, "locked").
-		Updates(map[string]interface{}{"status": "sold", "owner_id": buyerID})
+		Updates(creditUpd)
 	if updCredit.Error != nil {
 		return nil, updCredit.Error
 	}

@@ -10,6 +10,9 @@ const (
 	OpCreditCalculate  = "credit_calculate"  // 碳积分核算
 	OpCreditTransfer   = "credit_transfer"   // 碳积分权属变更(交易)
 	OpSellOrderCreate  = "sell_order_create" // 创建卖出挂单
+	OpSellOrderCancel  = "sell_order_cancel" // 撤销卖出挂单
+	OpPledgeCreate     = "pledge_create"     // 碳积分质押
+	OpPledgeRedeem     = "pledge_redeem"     // 质押赎回
 	OpTradeMatch       = "trade_match"       // 交易撮合
 	OpOnChain          = "on_chain"          // 手动上链存证
 	OpReportGenerate   = "report_generate"   // AI 报告生成

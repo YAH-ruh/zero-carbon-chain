@@ -49,10 +49,13 @@ func ListPendingOrders(c *gin.Context) {
 	pageSize := parseInt(c.Query("page_size"), 20)
 
 	var total int64
-	database.DB.Model(&models.SellOrder{}).Where("status = ?", "pending").Count(&total)
+	// 仅现货挂单(order_type 兜底空值为历史数据)；租赁/远期走 /api/rwa/trade-orders
+	database.DB.Model(&models.SellOrder{}).
+		Where("status = ? AND (order_type = ? OR order_type = '' OR order_type IS NULL)", "pending", "spot").
+		Count(&total)
 
 	var orders []models.SellOrder
-	if err := database.DB.Where("status = ?", "pending").
+	if err := database.DB.Where("status = ? AND (order_type = ? OR order_type = '' OR order_type IS NULL)", "pending", "spot").
 		Preload("Enterprise").
 		Order("id desc").
 		Offset((page - 1) * pageSize).
@@ -62,12 +65,54 @@ func ListPendingOrders(c *gin.Context) {
 		return
 	}
 
+	// 批量补充挂单关联的碳积分凭证编号(撮合弹窗展示与校验用)
+	creditNoMap := loadCreditNoMap(orders)
+	list := make([]gin.H, 0, len(orders))
+	for _, o := range orders {
+		list = append(list, gin.H{
+			"id": o.ID, "order_no": o.OrderNo, "enterprise_id": o.EnterpriseID,
+			"credit_id": o.CreditID, "credit_no": creditNoMap[o.CreditID],
+			"order_type": o.OrderType,
+			"quantity":   o.Quantity, "unit_price": o.UnitPrice, "total_amount": o.TotalAmount,
+			"status": o.Status, "buyer_id": o.BuyerID, "block_hash": o.BlockHash,
+			"lease_start_date": o.LeaseStartDate, "lease_end_date": o.LeaseEndDate,
+			"lease_cycle": o.LeaseCycle, "return_rule": o.ReturnRule,
+			"delivery_date": o.DeliveryDate, "expire_at": o.ExpireAt,
+			"on_chain": o.OnChain, "created_at": o.CreatedAt, "updated_at": o.UpdatedAt,
+			"enterprise": o.Enterprise,
+		})
+	}
+
 	response.OK(c, gin.H{
-		"list":     orders,
+		"list":     list,
 		"total":    total,
 		"page":     page,
 		"pageSize": pageSize,
 	})
+}
+
+// loadCreditNoMap 批量查询挂单关联碳积分的凭证编号映射(credit_id → credit_no)
+func loadCreditNoMap(orders []models.SellOrder) map[uint]string {
+	ids := make([]uint, 0, len(orders))
+	seen := map[uint]bool{}
+	for _, o := range orders {
+		if o.CreditID > 0 && !seen[o.CreditID] {
+			ids = append(ids, o.CreditID)
+			seen[o.CreditID] = true
+		}
+	}
+	result := map[uint]string{}
+	if len(ids) == 0 {
+		return result
+	}
+	var credits []models.CarbonCredit
+	if err := database.DB.Select("id", "credit_no").Where("id IN ?", ids).Find(&credits).Error; err != nil {
+		return result
+	}
+	for _, cr := range credits {
+		result[cr.ID] = cr.CreditNo
+	}
+	return result
 }
 
 // MatchOrder 交易撮合
@@ -100,6 +145,23 @@ func MatchOrder(c *gin.Context) {
 		transaction *models.Transaction
 		blockHash   string
 	)
+
+	// 前置校验：请求携带的碳积分编号必须与挂单实际关联的积分编号一致(防传错/篡改)
+	var order models.SellOrder
+	if err := database.DB.First(&order, req.OrderID).Error; err != nil {
+		response.NotFound(c, "挂单不存在")
+		return
+	}
+	var linkedCredit models.CarbonCredit
+	if err := database.DB.Select("credit_no").First(&linkedCredit, order.CreditID).Error; err != nil {
+		response.BadRequest(c, "挂单关联碳积分缺失，无法撮合")
+		return
+	}
+	if linkedCredit.CreditNo != req.CreditNo {
+		response.BadRequest(c, "碳积分编号与挂单不匹配，无法撮合")
+		return
+	}
+
 	err := database.DB.Transaction(func(tx *gorm.DB) error {
 		t, err := services.MatchAndTransfer(tx, req.OrderID, req.BuyerID)
 		if err != nil {

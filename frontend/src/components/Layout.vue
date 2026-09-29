@@ -8,7 +8,10 @@
 
     <header class="topbar">
       <div class="top-left">
-        <span class="logo" @click="goRoleHome">微碳链</span>
+        <span class="logo" @click="goRoleHome">
+          <img class="logo-mark" src="/favicon.svg" alt="零碳微证标识" />
+          <span class="logo-em">零</span>碳微证
+        </span>
         <span class="divider"></span>
         <span class="subtitle">碳积分可信交易平台 · {{ roleLabel }}</span>
       </div>
@@ -107,8 +110,9 @@ function handleLogout() {
   z-index: 10;
 }
 .top-left { display: flex; align-items: center; gap: 12px; min-width: 0; flex-shrink: 0; }
-.logo { font-size: 17px; font-weight: 700; letter-spacing: 0.03em; color: var(--text-1); cursor: pointer; white-space: nowrap; }
-.logo::first-letter { color: var(--primary); }
+.logo { display: inline-flex; align-items: center; gap: 7px; font-size: 17px; font-weight: 700; letter-spacing: 0.03em; color: var(--text-1); cursor: pointer; white-space: nowrap; }
+.logo-mark { width: 22px; height: 22px; border-radius: 6px; box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25); }
+.logo-em { color: var(--primary); }
 .divider { width: 1px; height: 16px; background: var(--line-strong); }
 .subtitle { font-size: 12px; color: var(--text-4); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 

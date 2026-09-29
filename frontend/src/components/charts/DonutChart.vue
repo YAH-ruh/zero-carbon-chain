@@ -36,7 +36,7 @@ const props = defineProps({
   unit: { type: String, default: '' }
 })
 
-const palette = ['#0d9488', '#3b82f6', '#f59e0b', '#8b5cf6', '#10b981', '#06b6d4', '#ec4899']
+const palette = ['#0d9488', '#0d9488', '#f59e0b', '#8b5cf6', '#10b981', '#06b6d4', '#ec4899']
 
 const data = computed(() => (props.segments || []).filter(s => s && Number(s.value) > 0))
 const hasData = computed(() => data.value.length > 0)
