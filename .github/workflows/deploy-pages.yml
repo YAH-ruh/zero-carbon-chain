@@ -32,12 +32,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
 
+      # 不用 npm ci：其配合 npm 缓存时存在跳过 esbuild/rollup 平台二进制的已知问题，
+      # npm install 与本地验证成功的安装路径保持一致
       - name: Install dependencies
         working-directory: frontend
-        run: npm ci
+        run: npm install --no-audit --no-fund
 
       # GITHUB_PAGES_REPO 决定 vite base（/zero-carbon-chain/），合约地址已固化在 public/contracts.json
       - name: Build
