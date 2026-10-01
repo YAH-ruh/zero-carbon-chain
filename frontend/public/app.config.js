@@ -4,5 +4,5 @@
  *          留空 = 走同源相对路径 /api（本地开发由 Vite 代理到 localhost:8080）
  */
 window.__APP_CONFIG__ = {
-  apiBase: '',
+  apiBase: 'https://zero-carbon-chain-production.up.railway.app',
 }
